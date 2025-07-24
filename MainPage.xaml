@@ -8,7 +8,17 @@
             <RowDefinition Height="0.1*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <StackLayout Grid.Row="0">
+        <StackLayout x:Name="Layy" Grid.Row="0">
+            <StackLayout x:Name="Statisticlay" Orientation="Horizontal">
+                <Label Margin="5">X</Label>
+                <Label Margin="5" x:Name="ScoreX">0</Label>
+                <Label Margin="5">0</Label>
+                <Label Margin="5" x:Name="Score0">0</Label>
+                <StackLayout Margin="5" x:Name="TimerLay">
+                    <Label Margin="5">Time</Label>
+                    <Label Margin="5" x:Name="LTimer">f</Label>
+                </StackLayout>
+            </StackLayout>
             <Button Clicked="NewGameStartMenuItem_OnClick" Text="Новая игра"></Button>
         </StackLayout>
         <Grid Grid.Row="1" x:Name = "ButtonsGrid">

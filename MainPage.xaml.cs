@@ -1,22 +1,65 @@
 ﻿
+using Microsoft.Maui.Controls.Platform;
+using Microsoft.Maui.Dispatching;
+using System.Diagnostics;
+using Windows.UI.Popups;
 namespace TicTacToeGameProj
 {
     public partial class MainPage : ContentPage
     {
         private int size = 3;
+        private DateTime _sessionStartTime;
         private List<List<Button>> buttons = new List<List<Button>>();
-        private bool isDarkTheme = true;
+        private IDispatcherTimer _updateTimer = null;
         // false - крестик true - нолик
         private bool FirstPlayerFlag = false;
         public MainPage(int s)
         {
             InitializeComponent();
+            _sessionStartTime = DateTime.Now;
+            _updateTimer = Application.Current.Dispatcher.CreateTimer();
+            _updateTimer.Interval = TimeSpan.FromSeconds(1);
+            _updateTimer.Tick += (s,e) => UpdateSessionTime();
+            _updateTimer.Start();
             LoadButtons();
+
         }
         public MainPage()
         {
             InitializeComponent();
             LoadButtons();
+            _sessionStartTime = DateTime.Now;
+            _updateTimer = Application.Current.Dispatcher.CreateTimer();
+            _updateTimer.Interval = TimeSpan.FromSeconds(1);
+            _updateTimer.Tick += (s, e) => UpdateSessionTime();
+            _updateTimer.Start();
+        }
+        private string FormatTime(TimeSpan timeSpan)
+        {
+            if (timeSpan.TotalDays >= 1)
+            {
+                return $"{(int)timeSpan.TotalDays}д {timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
+            }
+            else
+            {
+                return $"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
+            }
+        }
+        private void UpdateSessionTime()
+        {
+            {
+                var mGrid = this.FindByName<Grid>("MainGrid");
+                var lay = mGrid.FindByName<StackLayout>("Layy");
+                var lay2 = lay.
+                    FindByName<StackLayout>("Statisticlay");
+                var lay3 = lay2.FindByName<StackLayout>("TimerLay");
+                var sessionTimeText = lay3.FindByName<Label>("LTimer");
+                if (sessionTimeText != null)
+                {
+                    var sessionDuration = DateTime.Now - _sessionStartTime;
+                    sessionTimeText.Text = FormatTime(sessionDuration);
+                }
+            }
         }
         private void LoadButtons(int n = 3)
         {
@@ -52,6 +95,7 @@ namespace TicTacToeGameProj
         /// </summary>
         private void NewGame()
         {
+            _sessionStartTime = DateTime.Now;
             // Сброс всех кнопок к начальному виду
             for (int i = 0; i < buttons.Count; i++)
             {
@@ -81,9 +125,9 @@ namespace TicTacToeGameProj
                 button.IsEnabled = false;
                 FirstPlayerFlag = true;
                 // Проверка на то, случилась ли победа после данного хода
-                //if (IsWin(buttons, 'X') == true)
+                if (IsWin(buttons, 'X') == true)
                 {
-                    //NewGame();
+                    NewGame();
                 }
             }
             // Ходил нолик
@@ -94,9 +138,9 @@ namespace TicTacToeGameProj
                 // Блокировка нажатия кнопки, чтобы не допустить возможности повторного хода
                 button.IsEnabled = false;
                 FirstPlayerFlag = false;
-                //if (IsWin(buttons, '0') == true)
+                if (IsWin(buttons, '0') == true)
                 {
-                    //NewGame();
+                    NewGame();
                 }
             }
         }
@@ -108,6 +152,124 @@ namespace TicTacToeGameProj
         private void NewGameStartMenuItem_OnClick(object sender, EventArgs e)
         {
             NewGame();
+        }
+        /// <summary>
+        /// Проверка на победу
+        /// </summary>
+        /// <param name="Buttons">Матрица с кнопками</param>
+        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
+        /// <returns></returns>
+        private bool IsWin(List<List<Button>> Buttons, char symbol)
+        {
+            if (IsDiagonalWin(Buttons, symbol) == true || IsVerticalWin(Buttons, symbol) == true ||
+                IsHorizontallWin(Buttons, symbol) == true || IsSecondDiagonalWin(Buttons, symbol) == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Проверка победы по диагонали
+        /// </summary>
+        /// <param name="Buttons">Матрица с кнопками</param>
+        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
+        /// <returns></returns>
+        private bool IsDiagonalWin(List<List<Button>> Buttons, char symbol)
+        {
+            bool result = true;
+            for (int i = 0; i < Buttons.Count; i++)
+            {
+                if (Buttons[i][i].Text.ToString() != symbol.ToString())
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+        /// <summary>
+        /// Проверка победы по побочной диагонали
+        /// </summary>
+        /// <param name="Buttons">Матрица с кнопками</param>
+        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
+        /// <returns></returns>
+        private bool IsSecondDiagonalWin(List<List<Button>> Buttons, char symbol)
+        {
+            bool result = true;
+            for (int i = Buttons.Count - 1, j = 0; i >= 0; i--, j++)
+            {
+                if (Buttons[i][j].Text.ToString() != symbol.ToString())
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+        /// <summary>
+        /// Проверка победы по вертикали
+        /// </summary>
+        /// <param name="Buttons">Матрица с кнопками</param>
+        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
+        /// <returns></returns>
+        private bool IsVerticalWin(List<List<Button>> Buttons, char symbol)
+        {
+            bool result = false;
+            bool stopflag = false;
+            for (int i = 0; i < Buttons.Count; i++)
+            {
+                for (int j = 0; j < Buttons.Count; j++)
+                {
+                    // Если в столбце хоть один символ не равен искомому, победы явно нет
+                    if (Buttons[j][i].Text.ToString() != symbol.ToString())
+                    {
+                        stopflag = false;
+                        break;
+                    }
+                    stopflag = true;
+                }
+                // Если после проверки всего столбца значение флага истинно, игрок победил
+                if (stopflag == true)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+        /// <summary>
+        /// Проверка победы по горизонтале
+        /// </summary>
+        /// <param name="Buttons">Матрица с кнопками</param>
+        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
+        /// <returns></returns>
+        private bool IsHorizontallWin(List<List<Button>> Buttons, char symbol)
+        {
+            bool result = false;
+            bool stopflag = false;
+            for (int i = 0; i < Buttons.Count; i++)
+            {
+                for (int j = 0; j < Buttons.Count; j++)
+                {
+                    // Если в строке хоть один символ не равен искомому, победы явно нет
+                    if (Buttons[i][j].Text.ToString() != symbol.ToString())
+                    {
+                        stopflag = false;
+                        break;
+                    }
+                    stopflag = true;
+                }
+                // Если после проверки всей строки значение флага истинно, игрок победил
+                if (stopflag == true)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
     }
 }
