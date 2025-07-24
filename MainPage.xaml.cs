@@ -2,7 +2,7 @@
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Dispatching;
 using System.Diagnostics;
-using Windows.UI.Popups;
+//using Windows.UI.Popups;
 namespace TicTacToeGameProj
 {
     public partial class MainPage : ContentPage
@@ -11,29 +11,55 @@ namespace TicTacToeGameProj
         private DateTime _sessionStartTime;
         private List<List<Button>> buttons = new List<List<Button>>();
         private IDispatcherTimer _updateTimer = null;
-        // false - крестик true - нолик
+        private int XWindCount = 0;
+        private int ZeroWindCount = 0;
+        // false -ходит крестик true - нолик
         private bool FirstPlayerFlag = false;
-        public MainPage(int s)
+        private bool StartGameFlag;
+        private void Load()
         {
             InitializeComponent();
-            _sessionStartTime = DateTime.Now;
-            _updateTimer = Application.Current.Dispatcher.CreateTimer();
-            _updateTimer.Interval = TimeSpan.FromSeconds(1);
-            _updateTimer.Tick += (s,e) => UpdateSessionTime();
-            _updateTimer.Start();
-            LoadButtons();
-
-        }
-        public MainPage()
-        {
-            InitializeComponent();
-            LoadButtons();
             _sessionStartTime = DateTime.Now;
             _updateTimer = Application.Current.Dispatcher.CreateTimer();
             _updateTimer.Interval = TimeSpan.FromSeconds(1);
             _updateTimer.Tick += (s, e) => UpdateSessionTime();
             _updateTimer.Start();
+            Random r = new Random();
+            // Старт случайного первого игрока
+            if(r.Next(0,1) == 1)
+            {
+                // Старт нолика
+                StartGameFlag = true;
+            }
+            else
+            {
+                // Старт крестика
+                StartGameFlag = false;
+            }
+            FirstPlayerFlag = StartGameFlag;
         }
+        /// <summary>
+        /// Конструктор n на n 
+        /// </summary>
+        /// <param name="s"></param>
+        public MainPage(int s)
+        {
+            Load();
+            LoadButtons(s);
+        }
+        /// <summary>
+        /// Конструктор по умолчанию (3на3)
+        /// </summary>
+        public MainPage()
+        {
+            Load();
+            LoadButtons();
+        }
+        /// <summary>
+        /// Форматирование времени для секундомера
+        /// </summary>
+        /// <param name="timeSpan"></param>
+        /// <returns></returns>
         private string FormatTime(TimeSpan timeSpan)
         {
             if (timeSpan.TotalDays >= 1)
@@ -45,9 +71,13 @@ namespace TicTacToeGameProj
                 return $"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
             }
         }
+        /// <summary>
+        /// Обновление секундомера
+        /// </summary>
         private void UpdateSessionTime()
         {
             {
+                // Получение текстового поля
                 var mGrid = this.FindByName<Grid>("MainGrid");
                 var lay = mGrid.FindByName<StackLayout>("Layy");
                 var lay2 = lay.
@@ -61,6 +91,10 @@ namespace TicTacToeGameProj
                 }
             }
         }
+        /// <summary>
+        /// Создание игровых кнопок в формате n на n
+        /// </summary>
+        /// <param name="n">Размерность</param>
         private void LoadButtons(int n = 3)
         {
             buttons = new List<List<Button>>();
@@ -91,6 +125,42 @@ namespace TicTacToeGameProj
             }
         }
         /// <summary>
+        /// Получение текстового поля крестика
+        /// </summary>
+        /// <returns></returns>
+        private Label GetXLAbel()
+        {
+            // Получение текстового поля
+            var mGrid = this.FindByName<Grid>("MainGrid");
+            var lay = mGrid.FindByName<StackLayout>("Layy");
+            var lay2 = lay.
+                FindByName<StackLayout>("Statisticlay");
+            return lay2.FindByName<Label>("ScoreX");
+        }
+        /// <summary>
+        /// Получение текстового поля нолика
+        /// </summary>
+        /// <returns></returns>
+        private Label Get0Label()
+        {
+            // Получение текстового поля
+            var mGrid = this.FindByName<Grid>("MainGrid");
+            var lay = mGrid.FindByName<StackLayout>("Layy");
+            var lay2 = lay.
+                FindByName<StackLayout>("Statisticlay");
+            return lay2.FindByName<Label>("Score0");
+        }
+        /// <summary>
+        /// Обновление счёта
+        /// </summary>
+        private void UpdateScore()
+        {
+            var XScore = this.GetXLAbel();
+            var ZeroScore = this.Get0Label();
+            XScore.Text = XWindCount.ToString();
+            ZeroScore.Text = ZeroWindCount.ToString();
+        }
+        /// <summary>
         /// Начало новой игры
         /// </summary>
         private void NewGame()
@@ -105,8 +175,16 @@ namespace TicTacToeGameProj
                     buttons[i][j].IsEnabled = true;
                 }
             }
-            // Ход передаётся крестику
-            FirstPlayerFlag = false;
+            // Ход передаётся тому, кто в прошлый раз не начинал партию
+            if(StartGameFlag)
+            {
+                StartGameFlag = false;
+            }
+            else
+            {
+                StartGameFlag = true;
+            }
+            FirstPlayerFlag = StartGameFlag;
         }
         /// <summary>
         /// Обработчик нажатия любой кнопки для хода
@@ -127,6 +205,16 @@ namespace TicTacToeGameProj
                 // Проверка на то, случилась ли победа после данного хода
                 if (IsWin(buttons, 'X') == true)
                 {
+                    // Изменение счёта победителя
+                    if (!FirstPlayerFlag)
+                    {
+                        ZeroWindCount++;
+                    }
+                    else
+                    {
+                        XWindCount++;
+                    }
+                    UpdateScore();
                     NewGame();
                 }
             }
@@ -140,6 +228,16 @@ namespace TicTacToeGameProj
                 FirstPlayerFlag = false;
                 if (IsWin(buttons, '0') == true)
                 {
+                    // Изменение счёта победителя
+                    if (!FirstPlayerFlag)
+                    {
+                        ZeroWindCount++;
+                    }
+                    else
+                    {
+                        XWindCount++;
+                    }
+                    UpdateScore();
                     NewGame();
                 }
             }
