@@ -31,11 +31,11 @@ namespace TicTacToeGameProj
             _sessionStartTime = DateTime.Now;
             _updateTimer = Application.Current.Dispatcher.CreateTimer();
             _updateTimer.Interval = TimeSpan.FromSeconds(1);
-            //_updateTimer.Tick += (s, e) => UpdateSessionTime();
-            //_updateTimer.Start();
+            _updateTimer.Tick += (s, e) => UpdateSessionTime();
+            _updateTimer.Start();
             Random r = new Random();
             // Старт случайного первого игрока
-            if(r.Next(0,1) == 1)
+            if(r.Next(1,3) == 1)
             {
                 // Старт нолика
                 StartGameFlag = true;
@@ -95,11 +95,11 @@ namespace TicTacToeGameProj
             {
                 // Получение текстового поля
                 var mGrid = this.FindByName<Grid>("MainGrid");
-                var lay = mGrid.FindByName<StackLayout>("Layy");
-                var lay2 = lay.
-                    FindByName<StackLayout>("Statisticlay");
-                var lay3 = lay2.FindByName<StackLayout>("TimerLay");
-                var sessionTimeText = lay3.FindByName<Label>("LTimer");
+                var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+                var TFrame = StatGrid.FindByName<Frame>("TimerFrame");
+                var TGrid = TFrame.FindByName<Grid>("TimerGrid");
+                var TFrame2 = TGrid.FindByName<Frame>("FrameWithTimeLabel");
+                var sessionTimeText = TFrame2.FindByName<Label>("TimerLabel");
                 if (sessionTimeText != null)
                 {
                     var sessionDuration = DateTime.Now - _sessionStartTime;
@@ -115,10 +115,13 @@ namespace TicTacToeGameProj
         {
             // Получение текстового поля
             var mGrid = this.FindByName<Grid>("MainGrid");
-            var lay = mGrid.FindByName<StackLayout>("Layy");
-            var lay2 = lay.
-                FindByName<StackLayout>("Statisticlay");
-            return lay2.FindByName<Label>("ScoreX");
+            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
+            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
+            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
+            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
+
+            return Grid2.FindByName<Label>("XScoreLabel");
         }
         /// <summary>
         /// Получение текстового поля нолика
@@ -128,10 +131,13 @@ namespace TicTacToeGameProj
         {
             // Получение текстового поля
             var mGrid = this.FindByName<Grid>("MainGrid");
-            var lay = mGrid.FindByName<StackLayout>("Layy");
-            var lay2 = lay.
-                FindByName<StackLayout>("Statisticlay");
-            return lay2.FindByName<Label>("Score0");
+            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
+            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
+            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
+            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
+
+            return Grid2.FindByName<Label>("OScoreLabel");
         }
         /// <summary>
         /// Обновление счёта
@@ -204,7 +210,7 @@ namespace TicTacToeGameProj
                     {
                         XWindCount++;
                     }
-                   // UpdateScore();
+                    UpdateScore();
                     NewGame();
                 }
             }
@@ -229,7 +235,7 @@ namespace TicTacToeGameProj
                     {
                         XWindCount++;
                     }
-                   // UpdateScore();
+                    UpdateScore();
                     NewGame();
                 }
             }
@@ -360,6 +366,12 @@ namespace TicTacToeGameProj
                 }
             }
             return result;
+        }
+        private void ResetScoreButton_Clicked(object sender, EventArgs e)
+        {
+            XWindCount = 0;
+            ZeroWindCount = 0;
+            UpdateScore();
         }
     }
 }
