@@ -1,29 +1,190 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TicTacToeGameProj.MainPage">
+             x:Class="TicTacToeGameProj.MainPage"
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
 
-    <Grid x:Name="MainGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.2*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <StackLayout x:Name="Layy" Grid.Row="0">
-            <StackLayout x:Name="Statisticlay" Orientation="Horizontal">
-                <Label  Margin="5">X</Label>
-                <Label Margin="5" x:Name="ScoreX">0</Label>
-                <Label Margin="5">0</Label>
-                <Label Margin="5" x:Name="Score0">0</Label>
-                <StackLayout Margin="5" x:Name="TimerLay">
-                    <Label Margin="5">Time</Label>
-                    <Label Margin="5" x:Name="LTimer">f</Label>
+    <Grid x:Name="MainGrid" RowDefinitions="0.1*, 0.1*, 0.3*, *"
+          ColumnDefinitions="*, *"
+          RowSpacing="15"
+          ColumnSpacing="15"
+          Padding="20">
+
+        <!-- 1. Верхняя панель управления -->
+        <HorizontalStackLayout Grid.ColumnSpan="2">
+            <Button x:Name="HomeButton" 
+                    Text="Home"
+                    CornerRadius="25"
+                    BackgroundColor="#6200EE"
+                    TextColor="White"
+                    HorizontalOptions="Start"
+                    MinimumWidthRequest="120"/>
+
+            <ImageButton x:Name="SettingsButton"
+                        Source="settings.png"
+                        CornerRadius="25"
+                        Background="Transparent"
+                        HorizontalOptions="End"
+                        Aspect="AspectFit"
+                        HeightRequest="50"/>
+        </HorizontalStackLayout>
+
+        <!-- 2. Кнопка новой игры -->
+        <Button x:Name="NewGameButton"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Text="New Game"
+                CornerRadius="25"
+                BackgroundColor="#6200EE"
+                TextColor="White"
+                HeightRequest="50"/>
+
+        <!-- 3. Блок счета и таймера -->
+        <Grid Grid.Row="2"
+              Grid.ColumnSpan="2"
+              ColumnDefinitions="*, Auto"
+              ColumnSpacing="15">
+            
+            <!-- Табло счета -->
+            <Frame CornerRadius="25"
+                   BackgroundColor="#03DAC6"
+                   Padding="15"
+                   HorizontalOptions="Fill">
+                <Grid ColumnDefinitions="Auto, Auto, Auto"
+                      RowDefinitions="Auto, Auto"
+                      ColumnSpacing="20"
+                      RowSpacing="5"
+                      HorizontalOptions="Center">
+
+                    <!-- Крестик -->
+                    <ContentView Grid.Row="0" Grid.Column="0"
+                                 WidthRequest="40" HeightRequest="40"
+                                 HorizontalOptions="Center">
+                        <Line X1="40" Y1="0" X2="0" Y2="40"
+                              Stroke="Red" StrokeThickness="4"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center"/>
+                    </ContentView>
+                    <ContentView Grid.Row="0" Grid.Column="0"
+                        WidthRequest="40" HeightRequest="40"
+                        HorizontalOptions="Center">
+                        <Line X1="0" Y1="0" X2="40" Y2="40"
+                        Stroke="Red" StrokeThickness="4"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"/>
+                    </ContentView>
+
+                    <!-- Нолик -->
+                    <Ellipse Grid.Row="0" Grid.Column="1"
+                             WidthRequest="40" HeightRequest="40"
+                             Stroke="Green" StrokeThickness="4"
+                             HorizontalOptions="Center"/>
+
+                    <!-- Кнопка сброса -->
+                    <Button x:Name="ResetScoreButton"
+                            Grid.Row="0" Grid.Column="2"
+                            Text="Reset"
+                            CornerRadius="20"
+                            BackgroundColor="#FF0000"
+                            TextColor="White"
+                            WidthRequest="100"
+                            HeightRequest="40"/>
+
+                    <!-- Счет -->
+                    <Label x:Name="XScoreLabel" 
+                           Text="0" 
+                           Grid.Row="1" 
+                           Grid.Column="0"
+                           FontSize="16" 
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="OScoreLabel"
+                           Text="0" 
+                           Grid.Row="1" 
+                           Grid.Column="1"
+                           FontSize="16" 
+                           HorizontalOptions="Center"/>
+                </Grid>
+            </Frame>
+
+            <!-- Таймер -->
+            <Frame x:Name="TimerFrame"
+                   Grid.Column="1"
+                   CornerRadius="25"
+                   BackgroundColor="#03DAC6"
+                   Padding="15"
+                   HorizontalOptions="End">
+                <StackLayout>
+                    <Label Text="Time"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="TimerLabel"
+                           Text="00:00"
+                           FontSize="16"
+                           HorizontalOptions="Center"/>
                 </StackLayout>
-            </StackLayout>
-            <Button Clicked="NewGameStartMenuItem_OnClick" Text="Новая игра"></Button>
-        </StackLayout>
-        <Grid Grid.Row="1" x:Name = "ButtonsGrid">
+            </Frame>
+        </Grid>
 
+        <!-- 4. Многослойное игровое поле -->
+        <Grid x:Name="GameBoard"
+              Grid.Row="3"
+              Grid.ColumnSpan="2"
+              VerticalOptions="FillAndExpand">
+
+            <!-- Слой 1: Фон -->
+            <Grid x:Name="BackgroundGrid"
+                  RowDefinitions="*, *, *"
+                  ColumnDefinitions="*, *, *"
+                  BackgroundColor="LightGray">
+                
+                <!-- Горизонтальные линии -->
+                <BoxView Color="Black"
+                         HeightRequest="2"
+                         Grid.Row="0"
+                         Grid.ColumnSpan="3"
+                         VerticalOptions= "End"/>
+                <BoxView Color="Black"
+                         HeightRequest="2"
+                         Grid.Row="1"
+                         Grid.ColumnSpan="3"
+                         VerticalOptions="End"/>
+                
+                <!-- Вертикальные линии -->
+                <BoxView Color="Black"
+                         WidthRequest="2"
+                         Grid.Column="0"
+                         Grid.RowSpan="3"
+                         HorizontalOptions="End"/>
+                <BoxView Color="Black"
+                         WidthRequest="2"
+                         Grid.Column="1"
+                         Grid.RowSpan="3"
+                         HorizontalOptions="End"/>
+            </Grid>
+            
+            <!-- Слой 2: Нолики -->
+            <Grid x:Name="CirclesLayer"
+                  IsVisible="True"
+                  BackgroundColor="Transparent">
+            </Grid>
+
+            <!-- Слой 3: Крестики -->
+            <Grid x:Name="CrossesLayer"
+                 
+                  IsVisible="True"
+                  BackgroundColor="Transparent">
+            </Grid>
+
+            <!-- Слой 4: Пустой слой (резерв) -->
+            <Grid x:Name="EmptyLayer"
+                  RowDefinitions="*, *, *"
+                  ColumnDefinitions="*, *, *"
+                  BackgroundColor="Transparent"/>
+            <!-- Слой 5: Кнопки -->
+            <Grid x:Name="ButtonsLayer"
+                  BackgroundColor="Transparent">
+            </Grid>
         </Grid>
     </Grid>
-
 </ContentPage>

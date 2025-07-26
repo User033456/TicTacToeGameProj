@@ -1,7 +1,13 @@
-﻿
-using Microsoft.Maui.Controls.Platform;
+﻿using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Dispatching;
 using System.Diagnostics;
+//using Microsoft.UI.Xaml;
+//using Microsoft.UI.Xaml.Controls;
+//using Microsoft.UI.Xaml.Media;
+//using Microsoft.UI.Xaml.Shapes;
+using System;
+using Microsoft.Maui.Controls.Shapes;
+//using Uno.Toolkit.UI;
 //using Windows.UI.Popups;
 namespace TicTacToeGameProj
 {
@@ -9,21 +15,24 @@ namespace TicTacToeGameProj
     {
         private int size = 3;
         private DateTime _sessionStartTime;
+        private UIManager _manager;
         private List<List<Button>> buttons = new List<List<Button>>();
+        private List<List<Grid>> Xelements = new List<List<Grid>>();
+        private List<List<Grid>> Zeroelements = new List<List<Grid>>();
         private IDispatcherTimer _updateTimer = null;
         private int XWindCount = 0;
         private int ZeroWindCount = 0;
         // false -ходит крестик true - нолик
         private bool FirstPlayerFlag = false;
         private bool StartGameFlag;
-        private void Load()
+        private void Load(int n = 3)
         {
             InitializeComponent();
             _sessionStartTime = DateTime.Now;
             _updateTimer = Application.Current.Dispatcher.CreateTimer();
             _updateTimer.Interval = TimeSpan.FromSeconds(1);
-            _updateTimer.Tick += (s, e) => UpdateSessionTime();
-            _updateTimer.Start();
+            //_updateTimer.Tick += (s, e) => UpdateSessionTime();
+            //_updateTimer.Start();
             Random r = new Random();
             // Старт случайного первого игрока
             if(r.Next(0,1) == 1)
@@ -44,8 +53,10 @@ namespace TicTacToeGameProj
         /// <param name="s"></param>
         public MainPage(int s)
         {
-            Load();
-            LoadButtons(s);
+            Load(s);
+            _manager = new UIManager(this,s);
+            _manager.LoadX(out Xelements);
+            _manager.Load0(out Zeroelements);
         }
         /// <summary>
         /// Конструктор по умолчанию (3на3)
@@ -53,7 +64,10 @@ namespace TicTacToeGameProj
         public MainPage()
         {
             Load();
-            LoadButtons();
+            _manager = new UIManager(this);
+            _manager.LoadX(out Xelements);
+            _manager.Load0(out Zeroelements);
+            _manager.LoadButtons(out buttons, Button_OnClick);
         }
         /// <summary>
         /// Форматирование времени для секундомера
@@ -88,39 +102,6 @@ namespace TicTacToeGameProj
                 {
                     var sessionDuration = DateTime.Now - _sessionStartTime;
                     sessionTimeText.Text = FormatTime(sessionDuration);
-                }
-            }
-        }
-        /// <summary>
-        /// Создание игровых кнопок в формате n на n
-        /// </summary>
-        /// <param name="n">Размерность</param>
-        private void LoadButtons(int n = 3)
-        {
-            buttons = new List<List<Button>>();
-            var MaingGrid = this.FindByName<Grid>("MainGrid");
-            var ButtonsGrid = MaingGrid.FindByName<Grid>("ButtonsGrid");
-            for (int i = 0; i < n; i++)
-            {
-                // Разделение грида на строки и столбцы
-                buttons.Add(new List<Button>());
-                ButtonsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                ButtonsGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                for (int j = 0; j < n; j++)
-                {
-                    // Создание кнопки
-                    var button = new Button();
-                    button.Margin = new Thickness(5);
-                    //button.HorizontalOptions = HorizontalAlignment.Stretch;
-                    // button.VerticalAlignment = VerticalAlignment.Stretch;
-                    button.Text = " ";
-                    button.Clicked += Button_OnClick;
-                    //button.SetResourceReference(Button.StyleProperty, "CThemeButton");
-                    // Добавление кнопки в грид и список
-                    Grid.SetRow(button, i);
-                    Grid.SetColumn(button, j);
-                    ButtonsGrid.Children.Add(button);
-                    buttons[i].Add(button);
                 }
             }
         }
@@ -173,6 +154,8 @@ namespace TicTacToeGameProj
                 {
                     buttons[i][j].Text = " ";
                     buttons[i][j].IsEnabled = true;
+                    Xelements[i][j].IsVisible = false;
+                    Zeroelements[i][j].IsVisible = false;
                 }
             }
             // Ход передаётся тому, кто в прошлый раз не начинал партию
@@ -194,10 +177,15 @@ namespace TicTacToeGameProj
         private void Button_OnClick(object sender, EventArgs e)
         {
             var button = sender as Button;
+            int row = Grid.GetRow(button);
+            // Получаем номер столбца
+            int column = Grid.GetColumn(button);
             // Ходил крестик
             if (FirstPlayerFlag == false)
             {
                 button.Text = "X";
+                Xelements[row][column].IsVisible = true;
+                button.FontSize = 0;
                 //button.BorderBrush = redBrush;
                 // Блокировка нажатия кнопки, чтобы не допустить возможности повторного хода
                 button.IsEnabled = false;
@@ -214,7 +202,7 @@ namespace TicTacToeGameProj
                     {
                         XWindCount++;
                     }
-                    UpdateScore();
+                   // UpdateScore();
                     NewGame();
                 }
             }
@@ -222,6 +210,8 @@ namespace TicTacToeGameProj
             else
             {
                 button.Text = "0";
+                Zeroelements[row][column].IsVisible = true;
+                button.FontSize = 0;
                 //button.BorderBrush = greenBrush;
                 // Блокировка нажатия кнопки, чтобы не допустить возможности повторного хода
                 button.IsEnabled = false;
@@ -237,7 +227,7 @@ namespace TicTacToeGameProj
                     {
                         XWindCount++;
                     }
-                    UpdateScore();
+                   // UpdateScore();
                     NewGame();
                 }
             }
