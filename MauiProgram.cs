@@ -16,6 +16,7 @@ namespace TicTacToeGameProj
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
             builder.UseMauiCommunityToolkit();
+            builder.UseMauiApp<App>().UseMauiCommunityToolkit();
 #if DEBUG
             builder.Logging.AddDebug();
             

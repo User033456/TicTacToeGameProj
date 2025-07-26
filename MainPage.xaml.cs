@@ -54,9 +54,7 @@ namespace TicTacToeGameProj
         public MainPage(int s)
         {
             Load(s);
-            _manager = new UIManager(this,s);
-            _manager.LoadX(out Xelements);
-            _manager.Load0(out Zeroelements);
+            LoadUI(s);
         }
         /// <summary>
         /// Конструктор по умолчанию (3на3)
@@ -64,7 +62,11 @@ namespace TicTacToeGameProj
         public MainPage()
         {
             Load();
-            _manager = new UIManager(this);
+            LoadUI();
+        }
+        private void LoadUI(int n = 3)
+        {
+            _manager = new UIManager(this,n);
             _manager.LoadX(out Xelements);
             _manager.Load0(out Zeroelements);
             _manager.LoadButtons(out buttons, Button_OnClick);

@@ -1,190 +1,220 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage
+    xmlns:local="clr-namespace:TicTacToeGameProj"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+     xmlns:effects="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="TicTacToeGameProj.MainPage"
-             BackgroundColor="{DynamicResource PageBackgroundColor}">
-
+             NavigationPage.HasNavigationBar="False"
+             Shell.NavBarIsVisible="false"
+             >
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#B3EBED" Offset="0"/>
+            <GradientStop Color="#020136" Offset="1"/>
+        </LinearGradientBrush>
+    </ContentPage.Background>
     <Grid x:Name="MainGrid" RowDefinitions="0.1*, 0.1*, 0.3*, *"
           ColumnDefinitions="*, *"
           RowSpacing="15"
           ColumnSpacing="15"
           Padding="20">
-
         <!-- 1. Верхняя панель управления -->
-        <HorizontalStackLayout Grid.ColumnSpan="2">
+        <HorizontalStackLayout Grid.Column="0" >
+
             <Button x:Name="HomeButton" 
                     Text="Home"
                     CornerRadius="25"
-                    BackgroundColor="#6200EE"
-                    TextColor="White"
+                    BackgroundColor="#D9D9D9"
+                    TextColor="#020136"
                     HorizontalOptions="Start"
-                    MinimumWidthRequest="120"/>
-
-            <ImageButton x:Name="SettingsButton"
-                        Source="settings.png"
-                        CornerRadius="25"
-                        Background="Transparent"
-                        HorizontalOptions="End"
-                        Aspect="AspectFit"
-                        HeightRequest="50"/>
+                    MinimumWidthRequest="120"
+                    >
+            </Button>
         </HorizontalStackLayout>
-
+        <HorizontalStackLayout HorizontalOptions="End" Grid.Column="1">
+            <ImageButton x:Name="SettingsButton"
+            Source="settings.svg"
+            CornerRadius="25"
+                         
+            Background="Transparent"
+            HorizontalOptions="End"
+            Aspect="AspectFit"
+            HeightRequest="50"/>
+        </HorizontalStackLayout>
         <!-- 2. Кнопка новой игры -->
         <Button x:Name="NewGameButton"
+                Opacity="0.75"
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
                 Text="New Game"
                 CornerRadius="25"
-                BackgroundColor="#6200EE"
-                TextColor="White"
+                BackgroundColor="#D9D9D9"
+                TextColor="#020136"
                 HeightRequest="50"/>
-
         <!-- 3. Блок счета и таймера -->
         <Grid Grid.Row="2"
               Grid.ColumnSpan="2"
-              ColumnDefinitions="*, Auto"
+              ColumnDefinitions="Auto, Auto"
               ColumnSpacing="15">
-            
             <!-- Табло счета -->
             <Frame CornerRadius="25"
-                   BackgroundColor="#03DAC6"
-                   Padding="15"
-                   HorizontalOptions="Fill">
-                <Grid ColumnDefinitions="Auto, Auto, Auto"
-                      RowDefinitions="Auto, Auto"
-                      ColumnSpacing="20"
-                      RowSpacing="5"
-                      HorizontalOptions="Center">
+       BackgroundColor="Transparent" 
+                Padding="0"
+       HorizontalOptions="Fill">
+                <StackLayout>
+                   
+                    <Frame CornerRadius="0" 
+               BackgroundColor="#D9D9D9" 
+               Opacity="0.6" 
+                        Padding="15">
+                        <Label Text="Score"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
+                    </Frame>
 
-                    <!-- Крестик -->
-                    <ContentView Grid.Row="0" Grid.Column="0"
-                                 WidthRequest="40" HeightRequest="40"
-                                 HorizontalOptions="Center">
-                        <Line X1="40" Y1="0" X2="0" Y2="40"
-                              Stroke="Red" StrokeThickness="4"
-                              HorizontalOptions="Center"
-                              VerticalOptions="Center"/>
-                    </ContentView>
-                    <ContentView Grid.Row="0" Grid.Column="0"
-                        WidthRequest="40" HeightRequest="40"
-                        HorizontalOptions="Center">
-                        <Line X1="0" Y1="0" X2="40" Y2="40"
-                        Stroke="Red" StrokeThickness="4"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"/>
-                    </ContentView>
+                   
+                    <Frame CornerRadius="0"
+               BackgroundColor="#D9D9D9"
+               Opacity="0.75" 
+                        Padding="15">
+                        <Grid ColumnDefinitions="Auto, Auto, Auto"
+                  RowDefinitions="Auto, Auto"
+                  ColumnSpacing="15"
+                  RowSpacing="10"
+                  HorizontalOptions="Center">
 
-                    <!-- Нолик -->
-                    <Ellipse Grid.Row="0" Grid.Column="1"
-                             WidthRequest="40" HeightRequest="40"
-                             Stroke="Green" StrokeThickness="4"
-                             HorizontalOptions="Center"/>
+                            <!-- Крестик -->
+                            <ContentView Grid.Row="0" Grid.Column="0"
+                             WidthRequest="30" HeightRequest="30"
+                             HorizontalOptions="Center">
+                                <Line X1="25" Y1="0" X2="0" Y2="25"
+                          Stroke="Red" StrokeThickness="4"/>
+                            </ContentView>
+                            <ContentView Grid.Row="0" Grid.Column="0"
+                             WidthRequest="30" HeightRequest="30"
+                             HorizontalOptions="Center">
+                                <Line X1="0" Y1="0" X2="25" Y2="25"
+                          Stroke="Red" StrokeThickness="4"/>
+                            </ContentView>
 
-                    <!-- Кнопка сброса -->
-                    <Button x:Name="ResetScoreButton"
-                            Grid.Row="0" Grid.Column="2"
-                            Text="Reset"
-                            CornerRadius="20"
-                            BackgroundColor="#FF0000"
-                            TextColor="White"
-                            WidthRequest="100"
-                            HeightRequest="40"/>
+                            <!-- Нолик -->
+                            <Ellipse Grid.Row="0" Grid.Column="1"
+                         WidthRequest="35" HeightRequest="35"
+                         Stroke="Green" StrokeThickness="4"/>
 
-                    <!-- Счет -->
-                    <Label x:Name="XScoreLabel" 
-                           Text="0" 
-                           Grid.Row="1" 
-                           Grid.Column="0"
-                           FontSize="16" 
-                           HorizontalOptions="Center"/>
-                    <Label x:Name="OScoreLabel"
-                           Text="0" 
-                           Grid.Row="1" 
-                           Grid.Column="1"
-                           FontSize="16" 
-                           HorizontalOptions="Center"/>
-                </Grid>
+                            <!-- Кнопка сброса -->
+                            <Button x:Name="ResetScoreButton"
+                        Grid.Row="0" Grid.Column="2"
+                        Text="Reset"
+                        CornerRadius="20"
+                        BackgroundColor="#FF0000"
+                        TextColor="White"
+                        WidthRequest="90"
+                        HeightRequest="30"/>
+
+                            <!-- Счет -->
+                            <Label x:Name="XScoreLabel" 
+                       Text="0" 
+                       Grid.Row="1" 
+                       Grid.Column="0"
+                       FontSize="16"/>
+
+                            <Label x:Name="OScoreLabel"
+                       Text="0" 
+                       Grid.Row="1" 
+                       Grid.Column="1"
+                       FontSize="16"/>
+                        </Grid>
+                    </Frame>
+                </StackLayout>
             </Frame>
-
             <!-- Таймер -->
             <Frame x:Name="TimerFrame"
                    Grid.Column="1"
                    CornerRadius="25"
-                   BackgroundColor="#03DAC6"
-                   Padding="15"
+                   BackgroundColor="Transparent"
+                   Padding="0"
                    HorizontalOptions="End">
                 <StackLayout>
-                    <Label Text="Time"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"/>
-                    <Label x:Name="TimerLabel"
-                           Text="00:00"
-                           FontSize="16"
-                           HorizontalOptions="Center"/>
+                    <Frame CornerRadius="0"  Opacity="0.6" BackgroundColor="#D9D9D9" >
+                        <Label Text="Time"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                               VerticalOptions="Start"
+                            HorizontalOptions="Center"/>
+                    </Frame>
+                    <Frame CornerRadius="0"  Opacity="0.75" BackgroundColor="#D9D9D9">
+                        <Label x:Name="TimerLabel"
+                        Text="00:00"
+                        FontSize="16"
+                        HorizontalOptions="Center"/>
+                    </Frame>
                 </StackLayout>
             </Frame>
         </Grid>
-
-        <!-- 4. Многослойное игровое поле -->
-        <Grid x:Name="GameBoard"
-              Grid.Row="3"
-              Grid.ColumnSpan="2"
-              VerticalOptions="FillAndExpand">
-
-            <!-- Слой 1: Фон -->
-            <Grid x:Name="BackgroundGrid"
+        <Frame Grid.Row="3" x:Name="GameFrame" BackgroundColor="Transparent"
+               BorderColor="#D9D9D9"
+        Grid.ColumnSpan="2"
+        CornerRadius="20"
+        Padding="0"
+        HasShadow="True">
+            <!-- 4. Многослойное игровое поле -->
+            <Grid x:Name="GameBoard"
+              VerticalOptions="FillAndExpand"
+              >
+                <!-- Слой 1: Фон -->
+                <Grid x:Name="BackgroundGrid"
                   RowDefinitions="*, *, *"
                   ColumnDefinitions="*, *, *"
-                  BackgroundColor="LightGray">
-                
-                <!-- Горизонтальные линии -->
-                <BoxView Color="Black"
+                       Opacity="0.5"
+                  BackgroundColor="#D9D9D9">
+                    <!-- Горизонтальные линии -->
+                    <BoxView Color="Black"
                          HeightRequest="2"
                          Grid.Row="0"
                          Grid.ColumnSpan="3"
                          VerticalOptions= "End"/>
-                <BoxView Color="Black"
+                    <BoxView Color="Black"
                          HeightRequest="2"
                          Grid.Row="1"
                          Grid.ColumnSpan="3"
                          VerticalOptions="End"/>
-                
-                <!-- Вертикальные линии -->
-                <BoxView Color="Black"
+
+                    <!-- Вертикальные линии -->
+                    <BoxView Color="Black"
                          WidthRequest="2"
                          Grid.Column="0"
                          Grid.RowSpan="3"
                          HorizontalOptions="End"/>
-                <BoxView Color="Black"
+                    <BoxView Color="Black"
                          WidthRequest="2"
                          Grid.Column="1"
                          Grid.RowSpan="3"
                          HorizontalOptions="End"/>
-            </Grid>
-            
-            <!-- Слой 2: Нолики -->
-            <Grid x:Name="CirclesLayer"
+                </Grid>
+                <!-- Слой 2: Нолики -->
+                <Grid x:Name="CirclesLayer"
                   IsVisible="True"
                   BackgroundColor="Transparent">
-            </Grid>
-
-            <!-- Слой 3: Крестики -->
-            <Grid x:Name="CrossesLayer"
-                 
+                </Grid>
+                <!-- Слой 3: Крестики -->
+                <Grid x:Name="CrossesLayer"
                   IsVisible="True"
                   BackgroundColor="Transparent">
-            </Grid>
-
-            <!-- Слой 4: Пустой слой (резерв) -->
-            <Grid x:Name="EmptyLayer"
+                </Grid>
+                <!-- Слой 4: Пустой слой (резерв) -->
+                <Grid x:Name="EmptyLayer"
                   RowDefinitions="*, *, *"
                   ColumnDefinitions="*, *, *"
                   BackgroundColor="Transparent"/>
-            <!-- Слой 5: Кнопки -->
-            <Grid x:Name="ButtonsLayer"
+                <!-- Слой 5: Кнопки -->
+                <Grid x:Name="ButtonsLayer"
                   BackgroundColor="Transparent">
+                </Grid>
             </Grid>
-        </Grid>
+        </Frame>
     </Grid>
 </ContentPage>

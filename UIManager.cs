@@ -24,7 +24,8 @@ namespace TicTacToeGameProj
         public void LoadX(out List<List<Grid>> Xelements)
         {
             var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var GameBoardGrid = MaingGrid.FindByName<Grid>("GameBoard");
+            var f = MaingGrid.FindByName<Frame>("GameFrame");
+            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
             var XGrid = GameBoardGrid.FindByName<Grid>("CrossesLayer");
             Xelements = new List<List<Grid>>();
             for (int i = 0; i < n; i++)
@@ -99,7 +100,8 @@ namespace TicTacToeGameProj
         {
             Zeroelements = new List<List<Grid>>();
             var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var GameBoardGrid = MaingGrid.FindByName<Grid>("GameBoard");
+            var f = MaingGrid.FindByName<Frame>("GameFrame");
+            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
             var XGrid = GameBoardGrid.FindByName<Grid>("CirclesLayer");
             for (int i = 0; i < n; i++)
             {
@@ -159,7 +161,8 @@ namespace TicTacToeGameProj
         {
             buttons = new List<List<Button>>();
             var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var GameBoardGrid = MaingGrid.FindByName<Grid>("GameBoard");
+            var f = MaingGrid.FindByName<Frame>("GameFrame");
+            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
             var ButtonsGrid = GameBoardGrid.FindByName<Grid>("ButtonsLayer");
             for (int i = 0; i < n; i++)
             {
