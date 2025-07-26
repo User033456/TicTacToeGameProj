@@ -131,7 +131,7 @@ namespace TicTacToeGameProj
                     // Создаем сам нолик (Ellipse)
                     var circle = new Ellipse
                     {
-                        Stroke = Colors.Green,
+                        Stroke = Colors.SpringGreen,
                         StrokeThickness = 4,
                         WidthRequest = 60,
                         HeightRequest = 60,
