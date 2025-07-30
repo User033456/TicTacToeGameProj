@@ -14,38 +14,42 @@ namespace TicTacToeGameProj
     public partial class MainPage : ContentPage
     {
         private int size = 3;
-        private DateTime _sessionStartTime;
         private UIManager _manager;
+        private ScoreController scoreController;
+        private WinCheck CheckWin = new WinCheck();
+        private TimerManager timerManager;
         private List<List<Button>> buttons = new List<List<Button>>();
         private List<List<Grid>> Xelements = new List<List<Grid>>();
         private List<List<Grid>> Zeroelements = new List<List<Grid>>();
-        private IDispatcherTimer _updateTimer = null;
-        private int XWindCount = 0;
-        private int ZeroWindCount = 0;
+        private List<BoxView> boxViewsHorizontal= new List<BoxView>();
+        private List<BoxView> boxViewsVertical = new List<BoxView>();
+        private Microsoft.Maui.Controls.Shapes.Path MainD = new();
+        private Microsoft.Maui.Controls.Shapes.Path SecD = new();
         // false -ходит крестик true - нолик
         private bool FirstPlayerFlag = false;
         private bool StartGameFlag;
         private void Load(int n = 3)
         {
             InitializeComponent();
-            _sessionStartTime = DateTime.Now;
-            _updateTimer = Application.Current.Dispatcher.CreateTimer();
-            _updateTimer.Interval = TimeSpan.FromSeconds(1);
-            _updateTimer.Tick += (s, e) => UpdateSessionTime();
-            _updateTimer.Start();
+            scoreController = new ScoreController(GetXLAbel(),Get0Label());
+            timerManager = new TimerManager(GetTimerLabel());
+            timerManager.Initial();
             Random r = new Random();
             // Старт случайного первого игрока
             if(r.Next(1,3) == 1)
             {
                 // Старт нолика
                 StartGameFlag = true;
+                EllipseGlowEnable();
             }
             else
             {
                 // Старт крестика
                 StartGameFlag = false;
+                RedEnableGlow();
             }
             FirstPlayerFlag = StartGameFlag;
+            LoadUI(n);
         }
         /// <summary>
         /// Конструктор n на n 
@@ -53,8 +57,8 @@ namespace TicTacToeGameProj
         /// <param name="s"></param>
         public MainPage(int s)
         {
+            size = s;
             Load(s);
-            LoadUI(s);
         }
         /// <summary>
         /// Конструктор по умолчанию (3на3)
@@ -62,7 +66,6 @@ namespace TicTacToeGameProj
         public MainPage()
         {
             Load();
-            LoadUI();
         }
         private void LoadUI(int n = 3)
         {
@@ -70,42 +73,18 @@ namespace TicTacToeGameProj
             _manager.LoadX(out Xelements);
             _manager.Load0(out Zeroelements);
             _manager.LoadButtons(out buttons, Button_OnClick);
+            _manager.LoadLines(out boxViewsHorizontal, out boxViewsVertical);
         }
-        /// <summary>
-        /// Форматирование времени для секундомера
-        /// </summary>
-        /// <param name="timeSpan"></param>
-        /// <returns></returns>
-        private string FormatTime(TimeSpan timeSpan)
+        private Label GetTimerLabel()
         {
-            if (timeSpan.TotalDays >= 1)
-            {
-                return $"{(int)timeSpan.TotalDays}д {timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
-            }
-            else
-            {
-                return $"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
-            }
-        }
-        /// <summary>
-        /// Обновление секундомера
-        /// </summary>
-        private void UpdateSessionTime()
-        {
-            {
-                // Получение текстового поля
-                var mGrid = this.FindByName<Grid>("MainGrid");
-                var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-                var TFrame = StatGrid.FindByName<Frame>("TimerFrame");
-                var TGrid = TFrame.FindByName<Grid>("TimerGrid");
-                var TFrame2 = TGrid.FindByName<Frame>("FrameWithTimeLabel");
-                var sessionTimeText = TFrame2.FindByName<Label>("TimerLabel");
-                if (sessionTimeText != null)
-                {
-                    var sessionDuration = DateTime.Now - _sessionStartTime;
-                    sessionTimeText.Text = FormatTime(sessionDuration);
-                }
-            }
+            // Получение текстового поля
+            var mGrid = this.FindByName<Grid>("MainGrid");
+            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+            var TFrame = StatGrid.FindByName<Frame>("TimerFrame");
+            var TGrid = TFrame.FindByName<Grid>("TimerGrid");
+            var TFrame2 = TGrid.FindByName<Frame>("FrameWithTimeLabel");
+            var sessionTimeText = TFrame2.FindByName<Label>("TimerLabel");
+            return sessionTimeText;
         }
         /// <summary>
         /// Получение текстового поля крестика
@@ -120,7 +99,6 @@ namespace TicTacToeGameProj
             var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
             var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
             var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-
             return Grid2.FindByName<Label>("XScoreLabel");
         }
         /// <summary>
@@ -136,25 +114,10 @@ namespace TicTacToeGameProj
             var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
             var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
             var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-
             return Grid2.FindByName<Label>("OScoreLabel");
         }
-        /// <summary>
-        /// Обновление счёта
-        /// </summary>
-        private void UpdateScore()
+        private void ResetButtons()
         {
-            var XScore = this.GetXLAbel();
-            var ZeroScore = this.Get0Label();
-            XScore.Text = XWindCount.ToString();
-            ZeroScore.Text = ZeroWindCount.ToString();
-        }
-        /// <summary>
-        /// Начало новой игры
-        /// </summary>
-        private void NewGame()
-        {
-            _sessionStartTime = DateTime.Now;
             // Сброс всех кнопок к начальному виду
             for (int i = 0; i < buttons.Count; i++)
             {
@@ -166,23 +129,160 @@ namespace TicTacToeGameProj
                     Zeroelements[i][j].IsVisible = false;
                 }
             }
+        }
+        /// <summary>
+        /// Начало новой игры
+        /// </summary>
+        private void NewGame()
+        {
+            timerManager._sessionStartTime = DateTime.Now;
+            ResetButtons();
             // Ход передаётся тому, кто в прошлый раз не начинал партию
             if(StartGameFlag)
             {
                 StartGameFlag = false;
+                RedEnableGlow();
+                EllipseGlowDisable();
             }
             else
             {
                 StartGameFlag = true;
+                RedDisableGlow();
+                EllipseGlowEnable();
             }
             FirstPlayerFlag = StartGameFlag;
+        }
+        /// <summary>
+        /// Анимация появления линии
+        /// </summary>
+        /// <param name="myBoxView"></param>
+        /// <returns></returns>
+        async Task AnimateScaleAppearance(BoxView myBoxView)
+        {
+            myBoxView.IsVisible = true;
+            if(!FirstPlayerFlag)
+            {
+                myBoxView.BackgroundColor = Colors.SpringGreen;
+                myBoxView.Background = Colors.SpringGreen;
+                myBoxView.Color = Colors.SpringGreen;
+            }
+            else
+            {
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.Color = Colors.Red;
+            }
+            // Анимация увеличения масштаба с эффектом "пружины"
+            await myBoxView.ScaleTo(1, 1500, Easing.CubicIn);
+            // Дополнительно: небольшая вибрация после появления
+            await myBoxView.ScaleTo(1.05, 100, Easing.Linear);
+            await myBoxView.ScaleTo(1, 100, Easing.Linear);
+        }
+        async Task AnimateScaleAppearance(Microsoft.Maui.Controls.Shapes.Path myBoxView)
+        {
+            myBoxView.IsVisible = true;
+            if (!FirstPlayerFlag)
+            {
+                myBoxView.BackgroundColor = Colors.SpringGreen;
+                myBoxView.Background = Colors.SpringGreen;
+                myBoxView.Stroke = Colors.SpringGreen;
+            }
+            else
+            {
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.Stroke = Colors.Red;
+            }
+            // Анимация увеличения масштаба с эффектом "пружины"
+            await myBoxView.ScaleTo(1, 1500, Easing.CubicIn);
+            // Дополнительно: небольшая вибрация после появления
+            await myBoxView.ScaleTo(1.05, 100, Easing.Linear);
+            await myBoxView.ScaleTo(1, 100, Easing.Linear);
+        }
+        private async Task CreateLine()
+        {
+            _manager.LoadDiagonalLines(out MainD, out SecD);
+            switch (CheckWin.WinType)
+            {
+                case "IsDiagonalWin":
+                    await AnimateScaleAppearance(MainD);
+                    MainD.IsVisible = false;
+                    break;
+                case "IsSecondDiagonalWin":
+                    await AnimateScaleAppearance(SecD);
+                    SecD.IsVisible = false;
+                    break;
+                case "IsVerticalWin":
+                    await AnimateScaleAppearance(boxViewsVertical[CheckWin.WinCoordinate]);
+                    //await Task.Delay();
+                    boxViewsVertical[CheckWin.WinCoordinate].IsVisible = false;
+                    break;
+                case "IsHorizontallWin":
+                    await AnimateScaleAppearance(boxViewsHorizontal[CheckWin.WinCoordinate]);
+                    boxViewsHorizontal[CheckWin.WinCoordinate].IsVisible = false;
+                    break;
+            }
+        }
+
+        public void RedEnableGlow()
+        {
+            // Получение линий
+            var mGrid = this.FindByName<Grid>("MainGrid");
+            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
+            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
+            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
+            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
+            var view = Grid2.FindByName<ContentView>("RedLineOneCV");
+            var view2 = Grid2.FindByName<ContentView>("RedLineTwoCV");
+            var line1 = view.FindByName<Line>("Line1");
+            var line2 = view2.FindByName<Line>("Line2");
+            line1.Shadow.Opacity = 0.8F;
+            line2.Shadow.Opacity = 0.8F;
+        }
+        public void RedDisableGlow()
+        {
+            var mGrid = this.FindByName<Grid>("MainGrid");
+            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
+            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
+            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
+            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
+            var view = Grid2.FindByName<ContentView>("RedLineOneCV");
+            var view2 = Grid2.FindByName<ContentView>("RedLineTwoCV");
+            var line1 = view.FindByName<Line>("Line1");
+            var line2 = view2.FindByName<Line>("Line2");
+            line1.Shadow.Opacity = 0;
+            line2.Shadow.Opacity = 0;
+        }
+        private void EllipseGlowEnable()
+        {
+            var mGrid = this.FindByName<Grid>("MainGrid");
+            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
+            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
+            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
+            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
+            var el = Grid2.FindByName<Ellipse>("EllipseGreen");
+            el.Shadow.Opacity = 0.8F;
+        }
+        private void EllipseGlowDisable()
+        {
+            var mGrid = this.FindByName<Grid>("MainGrid");
+            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
+            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
+            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
+            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
+            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
+            var el = Grid2.FindByName<Ellipse>("EllipseGreen");
+            el.Shadow.Opacity = 0;
         }
         /// <summary>
         /// Обработчик нажатия любой кнопки для хода
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_OnClick(object sender, EventArgs e)
+        private async void Button_OnClick(object sender, EventArgs e)
         {
             var button = sender as Button;
             int row = Grid.GetRow(button);
@@ -194,25 +294,27 @@ namespace TicTacToeGameProj
                 button.Text = "X";
                 Xelements[row][column].IsVisible = true;
                 button.FontSize = 0;
-                //button.BorderBrush = redBrush;
                 // Блокировка нажатия кнопки, чтобы не допустить возможности повторного хода
                 button.IsEnabled = false;
                 FirstPlayerFlag = true;
                 // Проверка на то, случилась ли победа после данного хода
-                if (IsWin(buttons, 'X') == true)
+                if (CheckWin.IsWin(buttons, 'X') == true)
                 {
                     // Изменение счёта победителя
                     if (!FirstPlayerFlag)
                     {
-                        ZeroWindCount++;
+                        scoreController.ZeroWindCount++;
                     }
                     else
                     {
-                        XWindCount++;
+                        scoreController.XWindCount++;
                     }
-                    UpdateScore();
+                    scoreController.UpdateScore();
+                    await CreateLine();
                     NewGame();
                 }
+                RedDisableGlow();
+                EllipseGlowEnable();
             }
             // Ходил нолик
             else
@@ -220,24 +322,27 @@ namespace TicTacToeGameProj
                 button.Text = "0";
                 Zeroelements[row][column].IsVisible = true;
                 button.FontSize = 0;
-                //button.BorderBrush = greenBrush;
+          
                 // Блокировка нажатия кнопки, чтобы не допустить возможности повторного хода
                 button.IsEnabled = false;
                 FirstPlayerFlag = false;
-                if (IsWin(buttons, '0') == true)
+                if (CheckWin.IsWin(buttons, '0') == true)
                 {
                     // Изменение счёта победителя
                     if (!FirstPlayerFlag)
                     {
-                        ZeroWindCount++;
+                        scoreController.ZeroWindCount++;
                     }
                     else
                     {
-                        XWindCount++;
+                        scoreController.XWindCount++;
                     }
-                    UpdateScore();
+                    scoreController.UpdateScore();
+                    await CreateLine();
                     NewGame();
                 }
+                RedEnableGlow();
+                EllipseGlowDisable();
             }
         }
         /// <summary>
@@ -249,129 +354,14 @@ namespace TicTacToeGameProj
         {
             NewGame();
         }
-        /// <summary>
-        /// Проверка на победу
-        /// </summary>
-        /// <param name="Buttons">Матрица с кнопками</param>
-        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
-        /// <returns></returns>
-        private bool IsWin(List<List<Button>> Buttons, char symbol)
-        {
-            if (IsDiagonalWin(Buttons, symbol) == true || IsVerticalWin(Buttons, symbol) == true ||
-                IsHorizontallWin(Buttons, symbol) == true || IsSecondDiagonalWin(Buttons, symbol) == true)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        /// <summary>
-        /// Проверка победы по диагонали
-        /// </summary>
-        /// <param name="Buttons">Матрица с кнопками</param>
-        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
-        /// <returns></returns>
-        private bool IsDiagonalWin(List<List<Button>> Buttons, char symbol)
-        {
-            bool result = true;
-            for (int i = 0; i < Buttons.Count; i++)
-            {
-                if (Buttons[i][i].Text.ToString() != symbol.ToString())
-                {
-                    result = false;
-                    break;
-                }
-            }
-            return result;
-        }
-        /// <summary>
-        /// Проверка победы по побочной диагонали
-        /// </summary>
-        /// <param name="Buttons">Матрица с кнопками</param>
-        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
-        /// <returns></returns>
-        private bool IsSecondDiagonalWin(List<List<Button>> Buttons, char symbol)
-        {
-            bool result = true;
-            for (int i = Buttons.Count - 1, j = 0; i >= 0; i--, j++)
-            {
-                if (Buttons[i][j].Text.ToString() != symbol.ToString())
-                {
-                    result = false;
-                    break;
-                }
-            }
-            return result;
-        }
-        /// <summary>
-        /// Проверка победы по вертикали
-        /// </summary>
-        /// <param name="Buttons">Матрица с кнопками</param>
-        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
-        /// <returns></returns>
-        private bool IsVerticalWin(List<List<Button>> Buttons, char symbol)
-        {
-            bool result = false;
-            bool stopflag = false;
-            for (int i = 0; i < Buttons.Count; i++)
-            {
-                for (int j = 0; j < Buttons.Count; j++)
-                {
-                    // Если в столбце хоть один символ не равен искомому, победы явно нет
-                    if (Buttons[j][i].Text.ToString() != symbol.ToString())
-                    {
-                        stopflag = false;
-                        break;
-                    }
-                    stopflag = true;
-                }
-                // Если после проверки всего столбца значение флага истинно, игрок победил
-                if (stopflag == true)
-                {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-        }
-        /// <summary>
-        /// Проверка победы по горизонтале
-        /// </summary>
-        /// <param name="Buttons">Матрица с кнопками</param>
-        /// <param name="symbol">Символ, последовательность из которого нужно искать</param>
-        /// <returns></returns>
-        private bool IsHorizontallWin(List<List<Button>> Buttons, char symbol)
-        {
-            bool result = false;
-            bool stopflag = false;
-            for (int i = 0; i < Buttons.Count; i++)
-            {
-                for (int j = 0; j < Buttons.Count; j++)
-                {
-                    // Если в строке хоть один символ не равен искомому, победы явно нет
-                    if (Buttons[i][j].Text.ToString() != symbol.ToString())
-                    {
-                        stopflag = false;
-                        break;
-                    }
-                    stopflag = true;
-                }
-                // Если после проверки всей строки значение флага истинно, игрок победил
-                if (stopflag == true)
-                {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-        }
         private void ResetScoreButton_Clicked(object sender, EventArgs e)
         {
-            XWindCount = 0;
-            ZeroWindCount = 0;
-            UpdateScore();
+            scoreController.Reset();
+        }
+
+        private void ContentPage_Loaded(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Controls.Shapes;
+﻿//using CoreGraphics;
+using Microsoft.Maui.Controls.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -174,9 +175,6 @@ namespace TicTacToeGameProj
                 {
                     // Создание кнопки
                     var button = new Button();
-                    //button.Margin = new Thickness(5);
-                    //button.HorizontalOptions = HorizontalAlignment.Stretch;
-                    // button.VerticalAlignment = VerticalAlignment.Stretch;
                     button.Text = " ";
                     button.Clicked += Button_OnClick;
                     button.BackgroundColor = Colors.Transparent;
@@ -190,6 +188,132 @@ namespace TicTacToeGameProj
                     buttons[i].Add(button);
                 }
             }
+        }
+        /// <summary>
+        /// Создание столбцов
+        /// </summary>
+        /// <returns></returns>
+        private BoxView CreateLineVertical()
+        {
+            return new BoxView
+            {
+                Color = Colors.Red,
+                WidthRequest = 10,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.Center,
+                IsVisible = false
+            };
+        }
+        /// <summary>
+        /// Создание столбцов
+        /// </summary>
+        /// <returns></returns>
+        private BoxView CreateLineHorizontal()
+        {
+            return new BoxView
+            {
+                Color = Colors.Red,
+                HeightRequest = 10,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                IsVisible = false
+            };
+        }
+        /// <summary>
+        /// Создание линий для анимаций
+        /// </summary>
+        public void LoadLines(out List<BoxView> boxViewsHorizontal, out List<BoxView> boxViewsVertical)
+        {
+            boxViewsHorizontal = new List<BoxView>();
+            boxViewsVertical = new List<BoxView>();
+            var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
+            var f = MaingGrid.FindByName<Frame>("GameFrame");
+            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
+            var ButtonsGrid = GameBoardGrid.FindByName<Grid>("LineLayer");
+            // Заполнение линиями
+            for(int i = 0; i< n;i++)
+            {
+                ButtonsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                ButtonsGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+                // Заполнение строк
+                var RedView = CreateLineHorizontal();
+                Grid.SetRow(RedView, i);
+                Grid.SetColumn(RedView, 0);
+                Grid.SetColumnSpan(RedView, n);
+                ButtonsGrid.Children.Add(RedView);
+                boxViewsHorizontal.Add(RedView);
+                // Заполнение столбцов
+                var RedView2 = CreateLineVertical();
+                Grid.SetRow(RedView2, 0);
+                Grid.SetColumn(RedView2, i);
+                Grid.SetRowSpan(RedView2, n);
+                ButtonsGrid.Children.Add(RedView2);
+                boxViewsVertical.Add(RedView2);
+            }
+        }
+        public void LoadDiagonalLines(out Microsoft.Maui.Controls.Shapes.Path MainD,
+            out Microsoft.Maui.Controls.Shapes.Path SecD)
+        {
+            var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
+            var f = MaingGrid.FindByName<Frame>("GameFrame");
+            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
+            var ButtonsGrid = GameBoardGrid.FindByName<Grid>("LineLayer");
+            MainD = new Microsoft.Maui.Controls.Shapes.Path
+            {
+                // Настройка внешнего вида
+                Stroke = Colors.Red,
+                StrokeThickness = 10,
+                Data = new PathGeometry
+                {
+                    Figures = new PathFigureCollection
+                    {
+                        new PathFigure
+                        {
+                            StartPoint = new Point(0, 0), 
+                            Segments = new PathSegmentCollection
+                            {
+                                new LineSegment
+                                {
+                                    Point = new Point(ButtonsGrid.Width,ButtonsGrid.Height) 
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            Grid.SetRowSpan(MainD, ButtonsGrid.RowDefinitions.Count);
+            Grid.SetColumnSpan(MainD, ButtonsGrid.ColumnDefinitions.Count);
+            ButtonsGrid.Children.Add(MainD);
+            SecD = new Microsoft.Maui.Controls.Shapes.Path
+            {
+                Data = new PathGeometry
+                {
+                    Figures = new PathFigureCollection
+                    {
+                        new PathFigure
+                        {
+                            StartPoint = new Point(0, ButtonsGrid.Height),
+                            Segments = new PathSegmentCollection
+                            {
+                                new LineSegment
+                                {
+                                    Point = new Point(ButtonsGrid.Width, 0)
+                                }
+                            }
+                        }
+                    }
+                },
+                Stroke = Colors.Red,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill,
+                Aspect = Stretch.Uniform, 
+                StrokeThickness = 10
+            };
+            SecD.IsVisible = false;
+            MainD.IsVisible = false;
+            Grid.SetRowSpan(SecD, ButtonsGrid.RowDefinitions.Count);
+            Grid.SetColumnSpan(SecD, ButtonsGrid.ColumnDefinitions.Count);
+            ButtonsGrid.Children.Add(SecD);
         }
     }
 }

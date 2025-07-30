@@ -8,6 +8,7 @@
              x:Class="TicTacToeGameProj.MainPage"
              NavigationPage.HasNavigationBar="False"
              Shell.NavBarIsVisible="false"
+    Loaded="ContentPage_Loaded"
              >
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -93,25 +94,47 @@
                           RowSpacing="10"
                           x:Name="GridWithScoreStatistic"    
                           HorizontalOptions="Center">
-
+                            
                             <!-- Крестик -->
-                            <ContentView Grid.Row="0" Grid.Column="0"
+                            <ContentView x:Name="RedLineOneCV" Grid.Row="0" Grid.Column="0"
               WidthRequest="30" HeightRequest="26"
               HorizontalOptions="Center">
-                                <Line X1="25" Y1="0" X2="0" Y2="25"
-           Stroke="Red" StrokeThickness="4"/>
+                                <Line X1="25" Y1="0" X2="0" Y2="25" x:Name="Line1"
+          Stroke="Red" StrokeThickness="4">
+                                    <Line.Shadow >
+                                        <Shadow x:Name="RedLineOneShadow" Brush="Blue" 
+                    Offset="0,0"
+                    Radius="3" 
+                    Opacity="0"/>
+                                    </Line.Shadow>
+                                </Line>
                             </ContentView>
-                            <ContentView Grid.Row="0" Grid.Column="0"
+                            <ContentView Grid.Row="0" Grid.Column="0" x:Name="RedLineTwoCV"
               WidthRequest="26" HeightRequest="26"
               HorizontalOptions="Center">
-                                <Line X1="0" Y1="0" X2="25" Y2="25"
-           Stroke="Red" StrokeThickness="4"/>
+                                <Line X1="0" Y1="0" X2="25" Y2="25" x:Name="Line2"
+          Stroke="Red" StrokeThickness="4">
+                                    <Line.Shadow>
+                                        <Shadow x:Name="RedLineTwoShadow" Brush="Blue" 
+                    Offset="0,0" 
+                    Radius="3" 
+                    Opacity="0"/>
+                                    </Line.Shadow>
+                                </Line>
                             </ContentView>
 
                             <!-- Нолик -->
                             <Ellipse Grid.Row="0" Grid.Column="1"
           WidthRequest="26" HeightRequest="26"
-          Stroke="Green" StrokeThickness="4"/>
+          Stroke="Green" StrokeThickness="4"
+                                     x:Name="EllipseGreen">
+                                <Ellipse.Shadow>
+                                    <Shadow x:Name="EllipseShadow" Brush="Blue" 
+                                        Offset="0,0"
+                                        Radius="3" 
+                                        Opacity="0"/>
+                                </Ellipse.Shadow>
+                            </Ellipse>
 
                             <!-- Кнопка сброса -->
                             <Button x:Name="ResetScoreButton"
@@ -185,6 +208,7 @@
             <!-- 4. Многослойное игровое поле -->
             <Grid x:Name="GameBoard"
               VerticalOptions="FillAndExpand"
+                  HorizontalOptions="FillAndExpand"
               >
                 <!-- Слой 1: Фон -->
                 <Grid x:Name="BackgroundGrid"
@@ -194,24 +218,24 @@
                   BackgroundColor="#D9D9D9">
                     <!-- Горизонтальные линии -->
                     <BoxView Color="Black"
-                         HeightRequest="2"
+                         HeightRequest="3"
                          Grid.Row="0"
                          Grid.ColumnSpan="3"
                          VerticalOptions= "End"/>
                     <BoxView Color="Black"
-                         HeightRequest="2"
+                         HeightRequest="3"
                          Grid.Row="1"
                          Grid.ColumnSpan="3"
                          VerticalOptions="End"/>
 
                     <!-- Вертикальные линии -->
                     <BoxView Color="Black"
-                         WidthRequest="2"
+                         WidthRequest="3"
                          Grid.Column="0"
                          Grid.RowSpan="3"
                          HorizontalOptions="End"/>
                     <BoxView Color="Black"
-                         WidthRequest="2"
+                         WidthRequest="3"
                          Grid.Column="1"
                          Grid.RowSpan="3"
                          HorizontalOptions="End"/>
@@ -226,11 +250,15 @@
                   IsVisible="True"
                   BackgroundColor="Transparent">
                 </Grid>
-                <!-- Слой 4: Пустой слой (резерв) -->
-                <Grid x:Name="EmptyLayer"
-                  RowDefinitions="*, *, *"
-                  ColumnDefinitions="*, *, *"
-                  BackgroundColor="Transparent"/>
+                <!-- Слой 4: Линии -->
+                <Grid x:Name="LineLayer" 
+                  BackgroundColor="Transparent"
+                      VerticalOptions="FillAndExpand"
+    HorizontalOptions="FillAndExpand"
+                      >
+                    
+                </Grid>
+                
                 <!-- Слой 5: Кнопки -->
                 <Grid x:Name="ButtonsLayer"
                   BackgroundColor="Transparent">
