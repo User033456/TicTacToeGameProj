@@ -63,13 +63,15 @@
               x:Name="StatisticGrid">
             <!-- Табло счета -->
             <Frame CornerRadius="25" x:Name="ScoreFrame"
-       BackgroundColor="Transparent" 
+       BackgroundColor="Transparent"
+                   BorderColor="#D9D9D9"
                 Padding="0"
        HorizontalOptions="Fill">
                 <Grid x:Name="ScoreGrid"  RowDefinitions="0.5*, *">
                     <Frame
                         HorizontalOptions="FillAndExpand"
                         VerticalOptions="FillAndExpand"
+                        BorderColor="#D9D9D9"
                         CornerRadius="0"  Grid.Row="0"
                         BackgroundColor="#D9D9D9" 
                         Opacity="0.6" 
@@ -77,6 +79,7 @@
                         <Label Text="Score"
                             FontSize="18"
                             FontAttributes="Bold"
+                               TextColor="#020136"
                             HorizontalOptions="Center"/>
                     </Frame>
 
@@ -85,6 +88,7 @@
                            HorizontalOptions="FillAndExpand"
                            VerticalOptions="FillAndExpand"
                            BackgroundColor="#D9D9D9"
+                           BorderColor="#D9D9D9"
                            Opacity="0.75" 
                            x:Name="FrameWithScoreStatistic"
                            Padding="10">
@@ -140,16 +144,17 @@
                             <Button x:Name="ResetScoreButton"
          Grid.Row="0" Grid.Column="2"
          Text="Reset"
+                                    TextColor="#020136"
          CornerRadius="20"
                                     Clicked="ResetScoreButton_Clicked"
          BackgroundColor="#FF0000"
-         TextColor="White"
          WidthRequest="90"
          HeightRequest="25"/>
 
                             <!-- Счет -->
                             <Label x:Name="XScoreLabel" 
         Text="0" 
+                                   TextColor="#020136"
                     HorizontalOptions="Center"
         Grid.Row="1" 
         Grid.Column="0"
@@ -157,6 +162,7 @@
 
                             <Label x:Name="OScoreLabel"
         Text="0" 
+                                   TextColor="#020136"
                     HorizontalOptions="Center"
         Grid.Row="1" 
         Grid.Column="1"
@@ -168,7 +174,7 @@
             <!-- Таймер -->
             <Frame x:Name="TimerFrame"
                    Grid.Column="1"
-                   
+                   BorderColor="#D9D9D9"
            VerticalOptions="FillAndExpand"
                    CornerRadius="25"
                    BackgroundColor="Transparent"
@@ -179,10 +185,12 @@
                         HorizontalOptions="FillAndExpand"
                         VerticalOptions="FillAndExpand"
                         CornerRadius="0"  Grid.Row="0"
+                        BorderColor="#D9D9D9"
                         BackgroundColor="#D9D9D9" 
                         Opacity="0.6" 
                          Padding="10">
                         <Label Text="Time"
+                               TextColor="#020136"
                         FontSize="18"
                         FontAttributes="Bold"
                         HorizontalOptions="Center"/>
@@ -190,8 +198,10 @@
                     <Frame Grid.Row="1" CornerRadius="0"  Opacity="0.75" BackgroundColor="#D9D9D9"
                                         HorizontalOptions="FillAndExpand"
                                 VerticalOptions="FillAndExpand"
+                           BorderColor="#D9D9D9"
                            x:Name="FrameWithTimeLabel">
                         <Label x:Name="TimerLabel"
+                               TextColor="#020136"
                         Text="00:00"
                         FontSize="16"
                         HorizontalOptions="Center"/>

@@ -45,17 +45,19 @@
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
 	  <Debugger>Xamarin</Debugger>
+	  <AndroidKeyStore>False</AndroidKeyStore>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
 	  <Debugger>Xamarin</Debugger>
+	  <AndroidKeyStore>False</AndroidKeyStore>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\icon.svg" />
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Images\loadingpngedit.png" BaseSize="720,1080" Resize="True"/>
+		<MauiSplashScreen Include="Resources\Splash\loadscreen.svg" BaseSize="2160,3840" Resize="false" />
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
@@ -71,12 +73,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
 	</ItemGroup>
-
-	
-
 	<ItemGroup>
 	  <Folder Include="Platforms\Android\Resources\values\" />
 	</ItemGroup>
-	
-
 </Project>
