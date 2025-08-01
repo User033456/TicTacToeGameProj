@@ -37,6 +37,7 @@
         <HorizontalStackLayout HorizontalOptions="End" Grid.Column="1">
             <ImageButton x:Name="SettingsButton"
             Source="settings.svg"
+                         Clicked="SettingsButton_Clicked"
             CornerRadius="25"
                          
             Background="Transparent"

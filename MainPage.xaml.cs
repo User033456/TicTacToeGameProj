@@ -284,6 +284,7 @@ namespace TicTacToeGameProj
         /// <param name="e"></param>
         private async void Button_OnClick(object sender, EventArgs e)
         {
+            this.IsEnabled = false;
             var button = sender as Button;
             int row = Grid.GetRow(button);
             // Получаем номер столбца
@@ -344,6 +345,7 @@ namespace TicTacToeGameProj
                 RedEnableGlow();
                 EllipseGlowDisable();
             }
+            this.IsEnabled = true;
         }
         /// <summary>
         /// Обработчик начала новой игры
@@ -362,6 +364,11 @@ namespace TicTacToeGameProj
         private void ContentPage_Loaded(object sender, EventArgs e)
         {
 
+        }
+
+        private void SettingsButton_Clicked(object sender, EventArgs e)
+        {
+            DisplayAlert("", "The settings will come in version 2.0", "ОK");
         }
     }
 }
