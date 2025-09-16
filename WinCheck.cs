@@ -162,5 +162,19 @@ namespace TicTacToeGameProj
                 return false;
             }
         }
+        public bool IsDraw(List<List<Button>> Buttons)
+        {
+            foreach (var button in Buttons)
+            {
+                foreach(var btn in button)
+                {
+                    if(btn.Text == " ")
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
     }
 }

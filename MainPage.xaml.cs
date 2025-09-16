@@ -345,6 +345,11 @@ namespace TicTacToeGameProj
                 RedEnableGlow();
                 EllipseGlowDisable();
             }
+            // Если поле заполнено, но никто не победил
+            if(CheckWin.IsDraw(buttons))
+            {
+                NewGame();
+            }
             this.IsEnabled = true;
         }
         /// <summary>
