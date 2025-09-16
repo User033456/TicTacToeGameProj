@@ -223,7 +223,9 @@ namespace TicTacToeGameProj
                     break;
             }
         }
-
+        /// <summary>
+        /// Подсветка при ходе крестика
+        /// </summary>
         public void RedEnableGlow()
         {
             // Получение линий
@@ -240,6 +242,9 @@ namespace TicTacToeGameProj
             line1.Shadow.Opacity = 0.8F;
             line2.Shadow.Opacity = 0.8F;
         }
+        /// <summary>
+        /// Выключение подсветки хода крестика
+        /// </summary>
         public void RedDisableGlow()
         {
             var mGrid = this.FindByName<Grid>("MainGrid");

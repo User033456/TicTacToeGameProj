@@ -162,6 +162,11 @@ namespace TicTacToeGameProj
                 return false;
             }
         }
+        /// <summary>
+        /// Проверка на ничью
+        /// </summary>
+        /// <param name="Buttons"></param>
+        /// <returns></returns>
         public bool IsDraw(List<List<Button>> Buttons)
         {
             foreach (var button in Buttons)
