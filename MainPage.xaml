@@ -39,6 +39,7 @@
                  HorizontalOptions="Start"
                  MinimumWidthRequest="120"
                  HeightRequest="50"
+                        WidthRequest="80"
                  >
                 </Button>
             </HorizontalStackLayout>

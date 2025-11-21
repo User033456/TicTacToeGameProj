@@ -4,15 +4,15 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    CanBeDismissedByTappingOutsideOfPopup="True">
+    CanBeDismissedByTappingOutsideOfPopup="True"
+    Color="Transparent" 
+    >
+    <!-- на всякий случай -->
 
-    <!-- прозрачный фон popup’а (без серого прямоугольника на весь экран) -->
+    <!-- ВСЁ вокруг попапа прозрачное -->
     <Grid BackgroundColor="Transparent">
 
-        <!-- лёгкое затемнение заднего плана, но не прямоугольник -->
-        <BoxView Color="#80000000"/>
-
-        <!-- само окошко выбора языка -->
+        <!-- Само окошко выбора языка -->
         <Frame CornerRadius="25"
                BackgroundColor="#D9D9D9"
                BorderColor="#D9D9D9"
@@ -54,6 +54,5 @@
 
             </Grid>
         </Frame>
-
     </Grid>
 </toolkit:Popup>
