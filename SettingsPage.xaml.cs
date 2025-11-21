@@ -1,6 +1,8 @@
 ﻿using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using CommunityToolkit.Maui.Views;
 using TicTacToeGameProj.Services;
 
 namespace TicTacToeGameProj
@@ -13,42 +15,48 @@ namespace TicTacToeGameProj
         {
             InitializeComponent();
         }
-        /// <summary>
-        /// Загрузка заднего фона
-        /// </summary>
+
         protected override void OnAppearing()
         {
             base.OnAppearing();
 
+            // грузим конфиг
             _config = ConfigManager.LoadConfig();
 
+            // ---- ТЕМА ----
             ThemeManager.Initialize(_config);
             ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
-
-            // обновляем превью темы
-            ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
             ThemeName.Text = ThemeManager.CurrentTheme;
+            ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
 
+            // ---- ЯЗЫК ----
+            LanguageManager.Initialize(_config);
+            LanguageValueLabel.Text = LanguageManager.CurrentLanguage.DisplayName;
+
+            // ---- МУЗЫКА ----
             ApplyConfigToUi();
+
+            // язык мог нормализоваться, сохраним
+            _config["language"] = LanguageManager.CurrentLanguage.DisplayName;
+            ConfigManager.SaveConfig(_config);
         }
 
         private void ApplyConfigToUi()
         {
-            LanguageValueLabel.Text = _config.ContainsKey("language") ? _config["language"] : "English";
-
-            bool musicOn = _config.TryGetValue("music", out var m) &&
-                           string.Equals(m, "ON", StringComparison.OrdinalIgnoreCase);
+            bool musicOn = _config.TryGetValue("music", out var m)
+                           && string.Equals(m, "ON", StringComparison.OrdinalIgnoreCase);
 
             MusicSwitch.IsToggled = musicOn;
             MusicValueLabel.Text = musicOn ? "ON" : "OFF";
         }
 
-        // левая стрелка
+        // ==== смена темы стрелками ====
+
         private void OnPrevThemeTapped(object sender, EventArgs e)
         {
             ThemeManager.SwitchTheme(-1);
-            ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
 
+            ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
             ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
             ThemeName.Text = ThemeManager.CurrentTheme;
 
@@ -56,18 +64,40 @@ namespace TicTacToeGameProj
             ConfigManager.SaveConfig(_config);
         }
 
-        // правая стрелка
         private void OnNextThemeTapped(object sender, EventArgs e)
         {
             ThemeManager.SwitchTheme(+1);
-            ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
 
+            ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
             ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
             ThemeName.Text = ThemeManager.CurrentTheme;
 
             _config["theme"] = ThemeManager.CurrentTheme;
             ConfigManager.SaveConfig(_config);
         }
+
+        // ==== выбор языка через popup ====
+
+        private async void OnLanguageTapped(object sender, EventArgs e)
+        {
+            var popup = new LanguagePopup();
+            var result = await this.ShowPopupAsync(popup) as string; // "en", "ru" или null
+
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            var lang = LanguageManager.Languages.FirstOrDefault(l => l.Key == result);
+            if (lang == null)
+                return;
+
+            LanguageManager.SetLanguage(lang);
+            LanguageValueLabel.Text = lang.DisplayName;
+
+            _config["language"] = lang.DisplayName;
+            ConfigManager.SaveConfig(_config);
+        }
+
+        // ==== кнопка назад ====
 
         private async void OnBackButtonTapped(object sender, EventArgs e)
         {

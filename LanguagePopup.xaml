@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="TicTacToeGameProj.LanguagePopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    CanBeDismissedByTappingOutsideOfPopup="True">
+
+    <!-- прозрачный фон popup’а (без серого прямоугольника на весь экран) -->
+    <Grid BackgroundColor="Transparent">
+
+        <!-- лёгкое затемнение заднего плана, но не прямоугольник -->
+        <BoxView Color="#80000000"/>
+
+        <!-- само окошко выбора языка -->
+        <Frame CornerRadius="25"
+               BackgroundColor="#D9D9D9"
+               BorderColor="#D9D9D9"
+               HasShadow="True"
+               Padding="16,12"
+               WidthRequest="260"
+               HorizontalOptions="Center"
+               VerticalOptions="Center">
+
+            <Grid RowDefinitions="Auto,Auto,Auto">
+
+                <!-- Заголовок -->
+                <Label Text="Select language"
+                       Grid.Row="0"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="#020136"
+                       HorizontalOptions="Center"/>
+
+                <!-- Список языков -->
+                <VerticalStackLayout x:Name="LanguagesStack"
+                                     Grid.Row="1"
+                                     Spacing="10"
+                                     Margin="0,16,0,16"/>
+
+                <!-- Кнопка закрытия -->
+                <HorizontalStackLayout Grid.Row="2"
+                                       HorizontalOptions="End">
+                    <Button Text="Close"
+                            FontSize="14"
+                            CornerRadius="18"
+                            BackgroundColor="#D9D9D9"
+                            BorderColor="#020136"
+                            BorderWidth="1"
+                            TextColor="#020136"
+                            Padding="16,4"
+                            Clicked="OnCloseClicked"/>
+                </HorizontalStackLayout>
+
+            </Grid>
+        </Frame>
+
+    </Grid>
+</toolkit:Popup>

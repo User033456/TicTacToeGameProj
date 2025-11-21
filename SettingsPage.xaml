@@ -54,20 +54,28 @@
 
             <!-- LANGUAGE -->
             <Frame Grid.Row="1" Grid.ColumnSpan="2"
-    CornerRadius="25"
-    BackgroundColor="#D9D9D9"
-    BorderColor="#D9D9D9"
-    Opacity="0.75"
-    Padding="12">
+       CornerRadius="25"
+       BackgroundColor="#D9D9D9"
+       BorderColor="#D9D9D9"
+       Opacity="0.75"
+       Padding="12">
                 <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
                     <Label Text="Language" FontSize="14" FontAttributes="Bold" TextColor="#020136" VerticalOptions="Center" />
-                    <Frame Grid.Column="1" Padding="8,4" BackgroundColor="#D9D9D9" CornerRadius="14" HasShadow="False">
+                    <Frame Grid.Column="1"
+               Padding="8,4"
+               BackgroundColor="#D9D9D9"
+               CornerRadius="14"
+               HasShadow="False">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLanguageTapped"/>
+                        </Frame.GestureRecognizers>
+
                         <Label x:Name="LanguageValueLabel"
-                Text="English"
-                FontSize="14"
-                TextColor="#020136"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"/>
+                   Text="English"
+                   FontSize="14"
+                   TextColor="#020136"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
                     </Frame>
                 </Grid>
             </Frame>

@@ -90,4 +90,5 @@
 	  <MauiImage Include="Resources\Images\Background\paper.png" />
 	  <MauiImage Include="Resources\Images\Background\space.png" />
 	</ItemGroup>
+	
 </Project>
