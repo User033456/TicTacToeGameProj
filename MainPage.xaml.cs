@@ -1,12 +1,9 @@
 ﻿using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Dispatching;
 using System.Diagnostics;
-//using Microsoft.UI.Xaml;
-//using Microsoft.UI.Xaml.Controls;
-//using Microsoft.UI.Xaml.Media;
-//using Microsoft.UI.Xaml.Shapes;
 using System;
 using Microsoft.Maui.Controls.Shapes;
+using TicTacToeGameProj.Services;
 //using Uno.Toolkit.UI;
 //using Windows.UI.Popups;
 namespace TicTacToeGameProj
@@ -16,11 +13,11 @@ namespace TicTacToeGameProj
         private int size = 3;
         private UIManager _manager;
         private ScoreController scoreController;
-        private WinCheck CheckWin = new WinCheck();
+        private WinCheck CheckWin = new WinCheck(); 
         private TimerManager timerManager;
-        private List<List<Button>> buttons = new List<List<Button>>();
-        private List<List<Grid>> Xelements = new List<List<Grid>>();
-        private List<List<Grid>> Zeroelements = new List<List<Grid>>();
+        private List<List<Button>> buttons = new List<List<Button>>(); // Кнопки игрового поля
+        private List<List<Grid>> Xelements = new List<List<Grid>>(); // Таблица крестиков
+        private List<List<Grid>> Zeroelements = new List<List<Grid>>(); // Таблица ноликов
         private List<BoxView> boxViewsHorizontal= new List<BoxView>();
         private List<BoxView> boxViewsVertical = new List<BoxView>();
         private Microsoft.Maui.Controls.Shapes.Path MainD = new();
@@ -28,11 +25,22 @@ namespace TicTacToeGameProj
         // false -ходит крестик true - нолик
         private bool FirstPlayerFlag = false;
         private bool StartGameFlag;
-        private void Load(int n = 3)
+        /// <summary>
+        /// Загрузка фона
+        /// </summary>
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            var cfg = ConfigManager.LoadConfig();
+            ThemeManager.Initialize(cfg);
+            ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
+        }
+        protected void Load(int n = 3)
         {
             InitializeComponent();
-            scoreController = new ScoreController(GetXLAbel(),Get0Label());
-            timerManager = new TimerManager(GetTimerLabel());
+            scoreController = new ScoreController(XScoreLabel,OScoreLabel);
+            timerManager = new TimerManager(TimerLabel);
             timerManager.Initial();
             Random r = new Random();
             // Старт случайного первого игрока
@@ -54,7 +62,7 @@ namespace TicTacToeGameProj
         /// <summary>
         /// Конструктор n на n 
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">размерность поля</param>
         public MainPage(int s)
         {
             size = s;
@@ -67,55 +75,22 @@ namespace TicTacToeGameProj
         {
             Load();
         }
-        private void LoadUI(int n = 3)
+        /// <summary>
+        /// Загрузка элементов поля
+        /// </summary>
+        /// <param name="n">размерность поля</param>
+        protected void LoadUI(int n = 3)
         {
             _manager = new UIManager(this,n);
-            _manager.LoadX(out Xelements);
-            _manager.Load0(out Zeroelements);
-            _manager.LoadButtons(out buttons, Button_OnClick);
-            _manager.LoadLines(out boxViewsHorizontal, out boxViewsVertical);
-        }
-        private Label GetTimerLabel()
-        {
-            // Получение текстового поля
-            var mGrid = this.FindByName<Grid>("MainGrid");
-            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-            var TFrame = StatGrid.FindByName<Frame>("TimerFrame");
-            var TGrid = TFrame.FindByName<Grid>("TimerGrid");
-            var TFrame2 = TGrid.FindByName<Frame>("FrameWithTimeLabel");
-            var sessionTimeText = TFrame2.FindByName<Label>("TimerLabel");
-            return sessionTimeText;
+            _manager.LoadX(out Xelements,CrossesLayer);
+            _manager.Load0(out Zeroelements, CirclesLayer);
+            _manager.LoadButtons(out buttons, Button_OnClick, ButtonsLayer);
+            _manager.LoadLines(out boxViewsHorizontal, out boxViewsVertical, LineLayer);
+            _manager.LoadDiagonalLines(out MainD, out SecD, LineLayer);
         }
         /// <summary>
-        /// Получение текстового поля крестика
+        /// Сброс значения кнопок
         /// </summary>
-        /// <returns></returns>
-        private Label GetXLAbel()
-        {
-            // Получение текстового поля
-            var mGrid = this.FindByName<Grid>("MainGrid");
-            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
-            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
-            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
-            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-            return Grid2.FindByName<Label>("XScoreLabel");
-        }
-        /// <summary>
-        /// Получение текстового поля нолика
-        /// </summary>
-        /// <returns></returns>
-        private Label Get0Label()
-        {
-            // Получение текстового поля
-            var mGrid = this.FindByName<Grid>("MainGrid");
-            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
-            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
-            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
-            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-            return Grid2.FindByName<Label>("OScoreLabel");
-        }
         private void ResetButtons()
         {
             // Сброс всех кнопок к начальному виду
@@ -173,11 +148,16 @@ namespace TicTacToeGameProj
                 myBoxView.Color = Colors.Red;
             }
             // Анимация увеличения масштаба с эффектом "пружины"
-            await myBoxView.ScaleTo(1, 1500, Easing.CubicIn);
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
             // Дополнительно: небольшая вибрация после появления
-            await myBoxView.ScaleTo(1.05, 100, Easing.Linear);
-            await myBoxView.ScaleTo(1, 100, Easing.Linear);
+            await myBoxView.ScaleTo(1.05, 1000, Easing.BounceOut);
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
         }
+        /// <summary>
+        /// Отработка анимации победы
+        /// </summary>
+        /// <param name="myBoxView"></param>
+        /// <returns></returns>
         async Task AnimateScaleAppearance(Microsoft.Maui.Controls.Shapes.Path myBoxView)
         {
             myBoxView.IsVisible = true;
@@ -194,14 +174,18 @@ namespace TicTacToeGameProj
                 myBoxView.Stroke = Colors.Red;
             }
             // Анимация увеличения масштаба с эффектом "пружины"
-            await myBoxView.ScaleTo(1, 1500, Easing.CubicIn);
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
             // Дополнительно: небольшая вибрация после появления
-            await myBoxView.ScaleTo(1.05, 100, Easing.Linear);
-            await myBoxView.ScaleTo(1, 100, Easing.Linear);
+            await myBoxView.ScaleTo(1.05, 1000, Easing.BounceOut);
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
         }
+        /// <summary>
+        /// Создание линии при победе
+        /// </summary>
+        /// <returns></returns>
         private async Task CreateLine()
         {
-            _manager.LoadDiagonalLines(out MainD, out SecD);
+            _manager.LoadDiagonalLines(out MainD, out SecD, LineLayer);
             switch (CheckWin.WinType)
             {
                 case "IsDiagonalWin":
@@ -228,59 +212,24 @@ namespace TicTacToeGameProj
         /// </summary>
         public void RedEnableGlow()
         {
-            // Получение линий
-            var mGrid = this.FindByName<Grid>("MainGrid");
-            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
-            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
-            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
-            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-            var view = Grid2.FindByName<ContentView>("RedLineOneCV");
-            var view2 = Grid2.FindByName<ContentView>("RedLineTwoCV");
-            var line1 = view.FindByName<Line>("Line1");
-            var line2 = view2.FindByName<Line>("Line2");
-            line1.Shadow.Opacity = 0.8F;
-            line2.Shadow.Opacity = 0.8F;
+            Line1.Shadow.Opacity = 0.8F;
+            Line2.Shadow.Opacity = 0.8F;
         }
         /// <summary>
         /// Выключение подсветки хода крестика
         /// </summary>
         public void RedDisableGlow()
         {
-            var mGrid = this.FindByName<Grid>("MainGrid");
-            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
-            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
-            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
-            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-            var view = Grid2.FindByName<ContentView>("RedLineOneCV");
-            var view2 = Grid2.FindByName<ContentView>("RedLineTwoCV");
-            var line1 = view.FindByName<Line>("Line1");
-            var line2 = view2.FindByName<Line>("Line2");
-            line1.Shadow.Opacity = 0;
-            line2.Shadow.Opacity = 0;
+            Line1.Shadow.Opacity = 0;
+            Line2.Shadow.Opacity = 0;
         }
         private void EllipseGlowEnable()
         {
-            var mGrid = this.FindByName<Grid>("MainGrid");
-            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
-            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
-            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
-            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-            var el = Grid2.FindByName<Ellipse>("EllipseGreen");
-            el.Shadow.Opacity = 0.8F;
+            EllipseGreen.Shadow.Opacity = 0.8F;
         }
         private void EllipseGlowDisable()
         {
-            var mGrid = this.FindByName<Grid>("MainGrid");
-            var StatGrid = mGrid.FindByName<Grid>("StatisticGrid");
-            var TFrame = StatGrid.FindByName<Frame>("ScoreFrame");
-            var TGrid = TFrame.FindByName<Grid>("ScoreGrid");
-            var TFrame2 = TGrid.FindByName<Frame>("FrameWithScoreStatistic");
-            var Grid2 = TFrame2.FindByName<Grid>("GridWithScoreStatistic");
-            var el = Grid2.FindByName<Ellipse>("EllipseGreen");
-            el.Shadow.Opacity = 0;
+            EllipseGreen.Shadow.Opacity = 0;
         }
         /// <summary>
         /// Обработчик нажатия любой кнопки для хода
@@ -362,23 +311,11 @@ namespace TicTacToeGameProj
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void NewGameStartMenuItem_OnClick(object sender, EventArgs e)
-        {
-            NewGame();
-        }
-        private void ResetScoreButton_Clicked(object sender, EventArgs e)
-        {
-            scoreController.Reset();
-        }
+        private void NewGameStartMenuItem_OnClick(object sender, EventArgs e) => NewGame();
+        private void ResetScoreButton_Clicked(object sender, EventArgs e) => scoreController.Reset();
 
-        private void ContentPage_Loaded(object sender, EventArgs e)
-        {
+        private void ContentPage_Loaded(object sender, EventArgs e) { }
 
-        }
-
-        private void SettingsButton_Clicked(object sender, EventArgs e)
-        {
-            DisplayAlert("", "The settings will come in version 2.0", "ОK");
-        }
+        private async void SettingsButton_Clicked(object sender, EventArgs e) =>  await Navigation.PushAsync(new SettingsPage());
     }
 }

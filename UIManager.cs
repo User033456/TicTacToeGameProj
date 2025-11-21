@@ -22,12 +22,8 @@ namespace TicTacToeGameProj
         /// Загрузка крестиков
         /// </summary>
         /// <param name="n"></param>
-        public void LoadX(out List<List<Grid>> Xelements)
+        public void LoadX(out List<List<Grid>> Xelements,Grid XGrid)
         {
-            var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var f = MaingGrid.FindByName<Frame>("GameFrame");
-            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
-            var XGrid = GameBoardGrid.FindByName<Grid>("CrossesLayer");
             Xelements = new List<List<Grid>>();
             for (int i = 0; i < n; i++)
             {
@@ -97,13 +93,9 @@ namespace TicTacToeGameProj
         /// Загрузка ноликов
         /// </summary>
         /// <param name="Zeroelements"></param>
-        public void Load0(out List<List<Grid>> Zeroelements)
+        public void Load0(out List<List<Grid>> Zeroelements, Grid XGrid)
         {
             Zeroelements = new List<List<Grid>>();
-            var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var f = MaingGrid.FindByName<Frame>("GameFrame");
-            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
-            var XGrid = GameBoardGrid.FindByName<Grid>("CirclesLayer");
             for (int i = 0; i < n; i++)
             {
                 Zeroelements.Add(new List<Grid>());
@@ -158,13 +150,9 @@ namespace TicTacToeGameProj
         /// Создание игровых кнопок в формате n на n
         /// </summary>
         /// <param name="n">Размерность</param>
-        public void LoadButtons(out List<List<Button>> buttons, EventHandler Button_OnClick )
+        public void LoadButtons(out List<List<Button>> buttons, EventHandler Button_OnClick, Grid ButtonsGrid )
         {
             buttons = new List<List<Button>>();
-            var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var f = MaingGrid.FindByName<Frame>("GameFrame");
-            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
-            var ButtonsGrid = GameBoardGrid.FindByName<Grid>("ButtonsLayer");
             for (int i = 0; i < n; i++)
             {
                 // Разделение грида на строки и столбцы
@@ -222,42 +210,35 @@ namespace TicTacToeGameProj
         /// <summary>
         /// Создание линий для анимаций
         /// </summary>
-        public void LoadLines(out List<BoxView> boxViewsHorizontal, out List<BoxView> boxViewsVertical)
+        public void LoadLines(out List<BoxView> boxViewsHorizontal, out List<BoxView> boxViewsVertical, Grid LinesGrid)
         {
             boxViewsHorizontal = new List<BoxView>();
             boxViewsVertical = new List<BoxView>();
-            var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var f = MaingGrid.FindByName<Frame>("GameFrame");
-            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
-            var ButtonsGrid = GameBoardGrid.FindByName<Grid>("LineLayer");
             // Заполнение линиями
             for(int i = 0; i< n;i++)
             {
-                ButtonsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                ButtonsGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+                LinesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                LinesGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                 // Заполнение строк
                 var RedView = CreateLineHorizontal();
                 Grid.SetRow(RedView, i);
                 Grid.SetColumn(RedView, 0);
                 Grid.SetColumnSpan(RedView, n);
-                ButtonsGrid.Children.Add(RedView);
+                LinesGrid.Children.Add(RedView);
                 boxViewsHorizontal.Add(RedView);
                 // Заполнение столбцов
                 var RedView2 = CreateLineVertical();
                 Grid.SetRow(RedView2, 0);
                 Grid.SetColumn(RedView2, i);
                 Grid.SetRowSpan(RedView2, n);
-                ButtonsGrid.Children.Add(RedView2);
+                LinesGrid.Children.Add(RedView2);
                 boxViewsVertical.Add(RedView2);
             }
         }
         public void LoadDiagonalLines(out Microsoft.Maui.Controls.Shapes.Path MainD,
-            out Microsoft.Maui.Controls.Shapes.Path SecD)
+            out Microsoft.Maui.Controls.Shapes.Path SecD, Grid LinesGrid)
         {
-            var MaingGrid = Pagee.FindByName<Grid>("MainGrid");
-            var f = MaingGrid.FindByName<Frame>("GameFrame");
-            var GameBoardGrid = f.FindByName<Grid>("GameBoard");
-            var ButtonsGrid = GameBoardGrid.FindByName<Grid>("LineLayer");
+           
             MainD = new Microsoft.Maui.Controls.Shapes.Path
             {
                 // Настройка внешнего вида
@@ -274,16 +255,16 @@ namespace TicTacToeGameProj
                             {
                                 new LineSegment
                                 {
-                                    Point = new Point(ButtonsGrid.Width,ButtonsGrid.Height) 
+                                    Point = new Point(LinesGrid.Width,LinesGrid.Height) 
                                 }
                             }
                         }
                     }
                 }
             };
-            Grid.SetRowSpan(MainD, ButtonsGrid.RowDefinitions.Count);
-            Grid.SetColumnSpan(MainD, ButtonsGrid.ColumnDefinitions.Count);
-            ButtonsGrid.Children.Add(MainD);
+            Grid.SetRowSpan(MainD, LinesGrid.RowDefinitions.Count);
+            Grid.SetColumnSpan(MainD, LinesGrid.ColumnDefinitions.Count);
+            LinesGrid.Children.Add(MainD);
             SecD = new Microsoft.Maui.Controls.Shapes.Path
             {
                 Data = new PathGeometry
@@ -292,12 +273,12 @@ namespace TicTacToeGameProj
                     {
                         new PathFigure
                         {
-                            StartPoint = new Point(0, ButtonsGrid.Height),
+                            StartPoint = new Point(0, LinesGrid.Height),
                             Segments = new PathSegmentCollection
                             {
                                 new LineSegment
                                 {
-                                    Point = new Point(ButtonsGrid.Width, 0)
+                                    Point = new Point(LinesGrid.Width, 0)
                                 }
                             }
                         }
@@ -311,9 +292,9 @@ namespace TicTacToeGameProj
             };
             SecD.IsVisible = false;
             MainD.IsVisible = false;
-            Grid.SetRowSpan(SecD, ButtonsGrid.RowDefinitions.Count);
-            Grid.SetColumnSpan(SecD, ButtonsGrid.ColumnDefinitions.Count);
-            ButtonsGrid.Children.Add(SecD);
+            Grid.SetRowSpan(SecD, LinesGrid.RowDefinitions.Count);
+            Grid.SetColumnSpan(SecD, LinesGrid.ColumnDefinitions.Count);
+            LinesGrid.Children.Add(SecD);
         }
     }
 }

@@ -68,12 +68,26 @@
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
+
 	<ItemGroup>
+	  <None Remove="Resources\Images\Background\bricks.png" />
+	  <None Remove="Resources\Images\Background\games.png" />
+	  <None Remove="Resources\Images\Background\paper.png" />
+	  <None Remove="Resources\Images\Background\space.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
+		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.6" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Platforms\Android\Resources\values\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\Background\bricks.png" />
+	  <MauiImage Include="Resources\Images\Background\games.png" />
+	  <MauiImage Include="Resources\Images\Background\paper.png" />
+	  <MauiImage Include="Resources\Images\Background\space.png" />
 	</ItemGroup>
 </Project>

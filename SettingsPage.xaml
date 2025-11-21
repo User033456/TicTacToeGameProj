@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns:local="clr-namespace:TicTacToeGameProj"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="TicTacToeGameProj.SettingsPage"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="false"
+    Title="Settings" >
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#B3EBED" Offset="0"/>
+            <GradientStop Color="#020136" Offset="1"/>
+        </LinearGradientBrush>
+    </ContentPage.Background>
+    <Grid>
+        <Image x:Name="ThemeBackgroundImage"
+    Grid.RowSpan="5"
+    Grid.ColumnSpan="2"
+    Aspect="AspectFill"
+   />
+        <Grid x:Name="MainGrid"
+       RowDefinitions="0.1*, 0.2*, 0.2*, 0.2*, 0.4*"
+       ColumnDefinitions="*,*"
+       RowSpacing="15"
+       ColumnSpacing="15"
+       Padding="20">
+
+
+            <!-- верхняя панель -->
+            <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End">
+                <Button x:Name="HomeButton" 
+                 Text="Settings"
+                 CornerRadius="25"
+                 BackgroundColor="#D9D9D9"
+                 TextColor="#020136"
+                 FontSize="16"
+                 HorizontalOptions="End"
+                 MinimumWidthRequest="120"
+                 HeightRequest="45"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout HorizontalOptions="Start" Grid.Column="0">
+                <ImageButton x:Name="SettingsButton" Clicked="OnBackButtonTapped"
+                      Source="home.svg"
+                      CornerRadius="25"
+                      BackgroundColor="#D9D9D9"
+                      HorizontalOptions="Start"
+                      Aspect="AspectFit"
+                      HeightRequest="45"/>
+            </HorizontalStackLayout>
+
+            <!-- LANGUAGE -->
+            <Frame Grid.Row="1" Grid.ColumnSpan="2"
+    CornerRadius="25"
+    BackgroundColor="#D9D9D9"
+    BorderColor="#D9D9D9"
+    Opacity="0.75"
+    Padding="12">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <Label Text="Language" FontSize="14" FontAttributes="Bold" TextColor="#020136" VerticalOptions="Center" />
+                    <Frame Grid.Column="1" Padding="8,4" BackgroundColor="#D9D9D9" CornerRadius="14" HasShadow="False">
+                        <Label x:Name="LanguageValueLabel"
+                Text="English"
+                FontSize="14"
+                TextColor="#020136"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+                    </Frame>
+                </Grid>
+            </Frame>
+
+            <!-- MUSIC -->
+            <Frame Grid.Row="2" Grid.ColumnSpan="2"
+    CornerRadius="25"
+    BackgroundColor="#D9D9D9"
+    BorderColor="#D9D9D9"
+    Opacity="0.75"
+    Padding="12">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" VerticalOptions="Center">
+                    <Label Text="Music" FontSize="14" FontAttributes="Bold" TextColor="#020136" VerticalOptions="Center"/>
+                    <Frame Grid.Column="1" Padding="8,4" BackgroundColor="#D9D9D9" CornerRadius="14" HasShadow="False" VerticalOptions="Center">
+                        <Label x:Name="MusicValueLabel"
+                Text="OFF"
+                FontSize="14"
+                TextColor="#020136"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+                    </Frame>
+                    <Switch x:Name="MusicSwitch"
+             Grid.Column="2"
+             Scale="0.9"
+             VerticalOptions="Center"
+             IsToggled="False"/>
+                </Grid>
+            </Frame>
+
+            <!-- THEMES -->
+            <Frame Grid.Row="3" Grid.ColumnSpan="2"
+       CornerRadius="25"
+       BackgroundColor="#D9D9D9"
+       BorderColor="#D9D9D9"
+       Opacity="0.75"
+       Padding="12">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <Label Text="Themes" FontSize="14" FontAttributes="Bold" TextColor="#020136" VerticalOptions="Center"/>
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
+
+                        <!-- левая стрелка -->
+                        <Frame WidthRequest="32" HeightRequest="32" CornerRadius="16" Padding="0" BackgroundColor="#D9D9D9" HasShadow="False">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPrevThemeTapped" />
+                            </Frame.GestureRecognizers>
+                            <Label Text="‹" FontSize="20" TextColor="#020136"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Frame>
+
+                        <Grid x:Name="ThemePreviewGrid"
+      WidthRequest="90"
+      HeightRequest="40">
+
+                            <!-- Скруглённая картинка -->
+                            <Border StrokeThickness="0"
+            Background="Transparent"
+            Stroke="Transparent"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"
+            StrokeShape="RoundRectangle 12">
+
+                                <Image x:Name="ThemePreviewImage"
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill" />
+                            </Border>
+
+                            <!-- Название темы -->
+                            <Label x:Name="ThemeName"
+           Text="BASIC"
+           FontSize="14"
+           FontAttributes="Bold"
+           TextColor="Black"
+           HorizontalOptions="Center"
+           VerticalOptions="Center"/>
+                        </Grid>
+
+
+                        <!-- правая стрелка -->
+                        <Frame WidthRequest="32" HeightRequest="32" CornerRadius="16" Padding="0" BackgroundColor="#D9D9D9" HasShadow="False">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnNextThemeTapped" />
+                            </Frame.GestureRecognizers>
+                            <Label Text="›" FontSize="20" TextColor="#020136"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Frame>
+                    </HorizontalStackLayout>
+                </Grid>
+            </Frame>
+
+
+
+            <Grid Grid.Row="5" Grid.ColumnSpan="2"/>
+        </Grid>
+    </Grid>
+   
+</ContentPage>
