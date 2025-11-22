@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.Maui.Storage;
-
-namespace TicTacToeGameProj.Services
+﻿namespace TicTacToeGameProj
 {
     /// <summary>
     /// Класс для управления конфигом настроек

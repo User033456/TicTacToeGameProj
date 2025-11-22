@@ -1,12 +1,4 @@
-﻿using Microsoft.Maui.Controls.Platform;
-using Microsoft.Maui.Dispatching;
-using System.Diagnostics;
-using System;
-using Microsoft.Maui.Controls.Shapes;
-using TicTacToeGameProj.Services;
-//using Uno.Toolkit.UI;
-//using Windows.UI.Popups;
-namespace TicTacToeGameProj
+﻿namespace TicTacToeGameProj
 {
     public partial class MainPage : ContentPage
     {

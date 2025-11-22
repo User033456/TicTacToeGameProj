@@ -1,8 +1,4 @@
-﻿using System;
-using CommunityToolkit.Maui.Views;
-using Microsoft.Maui.Controls;
-using TicTacToeGameProj.Services;
-
+﻿using CommunityToolkit.Maui.Views;
 namespace TicTacToeGameProj
 {
     public partial class LanguagePopup : Popup

@@ -1,10 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using CommunityToolkit.Maui.Views;
-using TicTacToeGameProj.Services;
-
+﻿using CommunityToolkit.Maui.Views;
 namespace TicTacToeGameProj
 {
     public partial class SettingsPage : ContentPage
@@ -109,6 +103,14 @@ namespace TicTacToeGameProj
         private async void OnBackButtonTapped(object sender, EventArgs e)
         {
             await Navigation.PopAsync();
+        }
+        private void MusicSwitch_Toggled(object sender, ToggledEventArgs e)
+        {
+            var isOn = e.Value;
+
+            // значение для конфига в том же формате, что уже используешь
+            _config["music"] = isOn ? "ON" : "OFF";
+            ConfigManager.SaveConfig(_config);
         }
     }
 }

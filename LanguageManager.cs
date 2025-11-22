@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace TicTacToeGameProj
+﻿namespace TicTacToeGameProj
 {
     public class LanguageInfo
     {

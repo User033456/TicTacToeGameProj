@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Xaml;
-
-namespace TicTacToeGameProj
+﻿namespace TicTacToeGameProj
 {
     [ContentProperty(nameof(Key))]
     public class TranslateExtension : IMarkupExtension<BindingBase>
