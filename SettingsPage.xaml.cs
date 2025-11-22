@@ -40,7 +40,6 @@ namespace TicTacToeGameProj
             LanguageManager.Initialize(_config);
             LanguageValueLabel.Text = LanguageManager.CurrentLanguage.DisplayName;
             await LocalizationService.Instance.SetLanguageAsync(LanguageManager.CurrentLanguage.Key);
-
             // --- музыка (применяем состояние из конфига) ---
             bool musicOn = _config.TryGetValue("music", out var m)
                            && string.Equals(m, "ON", StringComparison.OrdinalIgnoreCase);

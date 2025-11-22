@@ -33,6 +33,7 @@
             <!-- верхняя панель -->
             <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End">
                 <Button x:Name="HomeButton"
+                        
                         Text="{loc:Translate Key=SettingsTitle}"
                         IsEnabled="False"
                         CornerRadius="25"
@@ -52,6 +53,7 @@
                              BackgroundColor="#D9D9D9"
                              HorizontalOptions="Start"
                              Aspect="AspectFit"
+                             Padding="3"
                              HeightRequest="50"
                              WidthRequest="80"/>
             </HorizontalStackLayout>

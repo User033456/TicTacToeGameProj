@@ -1,0 +1,13 @@
+﻿SettingsTitle=Ρυθμίσεις
+SettingsLanguage=Γλώσσα
+SettingsMusic=Μουσική
+SettingsThemes=Θέματα
+SettingsMusicOn=Ενεργό
+SettingsMusicOff=Ανενεργό
+
+MainTitle=Τρίλιζα
+MainHome=Αρχική
+MainNewGame=Νέο παιχνίδι
+MainScore=Σκορ
+MainTime=Χρόνος
+MainResetScore=Επαναφορά βαθμολογίας

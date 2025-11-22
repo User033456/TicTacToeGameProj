@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Maui.Storage;
-
+﻿using System.ComponentModel;
 namespace TicTacToeGameProj
 {
     /// <summary>

@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
-using SkiaSharp.Views.Maui.Controls.Hosting;
 namespace TicTacToeGameProj
 {
     public static class MauiProgram
@@ -16,7 +14,7 @@ namespace TicTacToeGameProj
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
             builder.UseMauiCommunityToolkit();
-            builder.UseMauiApp<App>().UseMauiCommunityToolkit().UseSkiaSharp();
+            builder.UseMauiApp<App>().UseMauiCommunityToolkit();
 #if DEBUG
             builder.Logging.AddDebug();
             

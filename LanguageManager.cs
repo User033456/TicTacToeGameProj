@@ -27,7 +27,8 @@
     new("fr", "Français"),
     new("it", "Italiano"),
     new("hi", "हिन्दी"),
-    new("zh", "中文")
+    new("zh", "中文"),
+    new("gr","Ελληνικά")
         };
 
         public static IReadOnlyList<LanguageInfo> Languages => _languages;
