@@ -1,0 +1,13 @@
+﻿SettingsTitle=Paramètres
+SettingsLanguage=Langue
+SettingsMusic=Musique
+SettingsThemes=Thèmes
+SettingsMusicOn=Activé
+SettingsMusicOff=Désactivé
+
+MainTitle=Morpion
+MainHome=Accueil
+MainNewGame=Nouvelle partie
+MainScore=Score
+MainTime=Temps
+MainResetScore=Réinitialiser le score

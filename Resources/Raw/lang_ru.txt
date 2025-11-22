@@ -1,0 +1,13 @@
+﻿SettingsTitle=Настройки
+SettingsLanguage=Язык
+SettingsMusic=Музыка
+SettingsThemes=Темы
+SettingsMusicOn=Вкл
+SettingsMusicOff=Выкл
+
+MainTitle=Крестики-нолики
+MainHome=Главная
+MainNewGame=Новая игра
+MainScore=Счёт
+MainTime=Время
+MainResetScore=Сброс

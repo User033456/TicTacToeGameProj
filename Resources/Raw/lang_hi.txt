@@ -1,0 +1,13 @@
+﻿SettingsTitle=सेटिंग्स
+SettingsLanguage=भाषा
+SettingsMusic=संगीत
+SettingsThemes=थीम्स
+SettingsMusicOn=चालू
+SettingsMusicOff=बंद
+
+MainTitle=टिक-टैक-टो
+MainHome=मुख्य पृष्ठ
+MainNewGame=नया खेल
+MainScore=स्कोर
+MainTime=समय
+MainResetScore=स्कोर रीसेट करें

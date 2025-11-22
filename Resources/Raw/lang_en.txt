@@ -1,0 +1,13 @@
+﻿SettingsTitle=Settings
+SettingsLanguage=Language
+SettingsMusic=Music
+SettingsThemes=Themes
+SettingsMusicOn=ON
+SettingsMusicOff=OFF
+
+MainTitle=Tic Tac Toe
+MainHome=Home
+MainNewGame=New Game
+MainScore=Score
+MainTime=Time
+MainResetScore=Reset

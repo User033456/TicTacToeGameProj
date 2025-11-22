@@ -1,0 +1,13 @@
+﻿SettingsTitle=Einstellungen
+SettingsLanguage=Sprache
+SettingsMusic=Musik
+SettingsThemes=Designs
+SettingsMusicOn=Ein
+SettingsMusicOff=Aus
+
+MainTitle=Tic-Tac-Toe
+MainHome=Startseite
+MainNewGame=Neues Spiel
+MainScore=Punkte
+MainTime=Zeit
+MainResetScore=Punkte zurücksetzen

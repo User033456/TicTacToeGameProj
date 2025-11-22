@@ -1,0 +1,13 @@
+﻿SettingsTitle=Configuración
+SettingsLanguage=Idioma
+SettingsMusic=Música
+SettingsThemes=Temas
+SettingsMusicOn=Encendido
+SettingsMusicOff=Apagado
+
+MainTitle=Tres en raya
+MainHome=Inicio
+MainNewGame=Nuevo juego
+MainScore=Puntuación
+MainTime=Tiempo
+MainResetScore=Reiniciar

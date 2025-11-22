@@ -1,0 +1,13 @@
+﻿SettingsTitle=הגדרות
+SettingsLanguage=שפה
+SettingsMusic=מוזיקה
+SettingsThemes=ערכות נושא
+SettingsMusicOn=פועל
+SettingsMusicOff=כבוי
+
+MainTitle=איקס עיגול
+MainHome=בית
+MainNewGame=משחק חדש
+MainScore=ניקוד
+MainTime=זמן
+MainResetScore=איפוס ניקוד

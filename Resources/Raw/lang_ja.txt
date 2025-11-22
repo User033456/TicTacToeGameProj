@@ -1,0 +1,13 @@
+﻿SettingsTitle=設定
+SettingsLanguage=言語
+SettingsMusic=音楽
+SettingsThemes=テーマ
+SettingsMusicOn=オン
+SettingsMusicOff=オフ
+
+MainTitle=三目並べ
+MainHome=ホーム
+MainNewGame=新しいゲーム
+MainScore=スコア
+MainTime=時間
+MainResetScore=リセット

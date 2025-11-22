@@ -1,0 +1,13 @@
+﻿SettingsTitle=Configurações
+SettingsLanguage=Idioma
+SettingsMusic=Música
+SettingsThemes=Temas
+SettingsMusicOn=Ligado
+SettingsMusicOff=Desligado
+
+MainTitle=Jogo da Velha
+MainHome=Início
+MainNewGame=Novo jogo
+MainScore=Pontuação
+MainTime=Tempo
+MainResetScore=Reiniciar placar

@@ -21,8 +21,17 @@ namespace TicTacToeGameProj
         // сюда можно добавлять любые новые языки
         private static readonly List<LanguageInfo> _languages = new()
         {
-            new LanguageInfo("en", "English"),
-            new LanguageInfo("ru", "Русский")
+           new("en", "English"),
+    new("ru", "Русский"),
+    new("ja", "日本語"),
+    new("es", "Español"),
+    new("pt", "Português"),
+    new("he", "עברית"),
+    new("de", "Deutsch"),
+    new("fr", "Français"),
+    new("it", "Italiano"),
+    new("hi", "हिन्दी"),
+    new("zh", "中文")
         };
 
         public static IReadOnlyList<LanguageInfo> Languages => _languages;

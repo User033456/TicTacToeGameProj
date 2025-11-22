@@ -1,0 +1,13 @@
+﻿SettingsTitle=设置
+SettingsLanguage=语言
+SettingsMusic=音乐
+SettingsThemes=主题
+SettingsMusicOn=开启
+SettingsMusicOff=关闭
+
+MainTitle=井字棋
+MainHome=主页
+MainNewGame=新游戏
+MainScore=得分
+MainTime=时间
+MainResetScore=重置得分

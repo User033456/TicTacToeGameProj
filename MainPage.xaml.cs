@@ -11,6 +11,7 @@ namespace TicTacToeGameProj
     public partial class MainPage : ContentPage
     {
         private int size = 3;
+        private Dictionary<string, string> _config = new();
         private UIManager _manager;
         private ScoreController scoreController;
         private WinCheck CheckWin = new WinCheck(); 
@@ -28,13 +29,22 @@ namespace TicTacToeGameProj
         /// <summary>
         /// Загрузка фона
         /// </summary>
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            var cfg = ConfigManager.LoadConfig();
-            ThemeManager.Initialize(cfg);
+            // перечитываем конфиг, если он мог поменяться
+            _config = ConfigManager.LoadConfig();
+
+            // тема
+            ThemeManager.Initialize(_config);
             ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
+
+            // язык (обновляем локализацию, если вдруг изменился)
+            LanguageManager.Initialize(_config);
+            await LocalizationService.Instance.SetLanguageAsync(LanguageManager.CurrentLanguage.Key);
+
+            // если у тебя есть логика таймера/счёта в OnAppearing — оставь её ниже
         }
         protected void Load(int n = 3)
         {
@@ -65,6 +75,16 @@ namespace TicTacToeGameProj
         /// <param name="s">размерность поля</param>
         public MainPage(int s)
         {
+            _config = ConfigManager.LoadConfig();
+
+            // 2. Язык
+            LanguageManager.Initialize(_config);
+
+            // 3. Локализация (текстовые файлы lang_xx.txt)
+            LocalizationService.Instance
+                .SetLanguageAsync(LanguageManager.CurrentLanguage.Key)
+                .GetAwaiter()
+                .GetResult();
             size = s;
             Load(s);
         }
@@ -73,6 +93,16 @@ namespace TicTacToeGameProj
         /// </summary>
         public MainPage()
         {
+            _config = ConfigManager.LoadConfig();
+
+            // 2. Язык
+            LanguageManager.Initialize(_config);
+
+            // 3. Локализация (текстовые файлы lang_xx.txt)
+            LocalizationService.Instance
+                .SetLanguageAsync(LanguageManager.CurrentLanguage.Key)
+                .GetAwaiter()
+                .GetResult();
             Load();
         }
         /// <summary>

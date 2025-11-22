@@ -2,289 +2,297 @@
 <ContentPage
     xmlns:local="clr-namespace:TicTacToeGameProj"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-     xmlns:effects="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:effects="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="TicTacToeGameProj.MainPage"
-             NavigationPage.HasNavigationBar="False"
-             Shell.NavBarIsVisible="false"
+    xmlns:loc="clr-namespace:TicTacToeGameProj"
+    x:Class="TicTacToeGameProj.MainPage"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="false"
     Loaded="ContentPage_Loaded"
-             >
+    Title="{loc:Translate Key=MainTitle}">
+
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#B3EBED" Offset="0"/>
             <GradientStop Color="#020136" Offset="1"/>
         </LinearGradientBrush>
     </ContentPage.Background>
+
     <Grid>
         <Image x:Name="ThemeBackgroundImage"
-    Grid.RowSpan="4"
-    Grid.ColumnSpan="2"
-    Aspect="AspectFill"
-   />
-        <Grid x:Name="MainGrid" RowDefinitions="0.1*, 0.1*, 0.4*, *"
-       ColumnDefinitions="*, *"
-       RowSpacing="15"
-       ColumnSpacing="15"
-       Padding="20">
+               Grid.RowSpan="4"
+               Grid.ColumnSpan="2"
+               Aspect="AspectFill" />
+
+        <Grid x:Name="MainGrid"
+              RowDefinitions="0.1*, 0.1*, 0.4*, *"
+              ColumnDefinitions="*, *"
+              RowSpacing="15"
+              ColumnSpacing="15"
+              Padding="20">
 
             <!-- 1. Верхняя панель управления -->
-            <HorizontalStackLayout Grid.Column="0" >
-
+            <HorizontalStackLayout Grid.Column="0">
                 <Button x:Name="HomeButton" 
-                 Text="Home"
-                 CornerRadius="25"
-                 BackgroundColor="#D9D9D9"
-                 TextColor="#020136"
-                 HorizontalOptions="Start"
-                 MinimumWidthRequest="120"
-                 HeightRequest="50"
-                        WidthRequest="80"
-                 >
+                        Text="{loc:Translate Key=MainHome}"
+                        CornerRadius="25"
+                        BackgroundColor="#D9D9D9"
+                        TextColor="#020136"
+                        HorizontalOptions="Start"
+                        MinimumWidthRequest="120"
+                        HeightRequest="50"
+                        WidthRequest="80">
                 </Button>
             </HorizontalStackLayout>
+
             <HorizontalStackLayout HorizontalOptions="End" Grid.Column="1">
                 <ImageButton x:Name="SettingsButton"
-         Source="settings.svg"
-                      Clicked="SettingsButton_Clicked"
-         CornerRadius="25"   
-          BackgroundColor="#D9D9D9"
-         HorizontalOptions="End"
-         Aspect="AspectFit"
-         HeightRequest="50"/>
+                             Source="settings.svg"
+                             Clicked="SettingsButton_Clicked"
+                             CornerRadius="25"   
+                             BackgroundColor="#D9D9D9"
+                             HorizontalOptions="End"
+                             Aspect="AspectFit"
+                             HeightRequest="50"/>
             </HorizontalStackLayout>
+
             <!-- 2. Кнопка новой игры -->
             <Button x:Name="NewGameButton"
-             Opacity="0.75"
-             Clicked="NewGameStartMenuItem_OnClick"
-             Grid.Row="1"
-             Grid.ColumnSpan="2"
-             Text="New Game"
-             CornerRadius="25"
-             BackgroundColor="#D9D9D9"
-             TextColor="#020136"
-             HeightRequest="50"/>
+                    Opacity="0.75"
+                    Clicked="NewGameStartMenuItem_OnClick"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Text="{loc:Translate Key=MainNewGame}"
+                    CornerRadius="25"
+                    BackgroundColor="#D9D9D9"
+                    TextColor="#020136"
+                    HeightRequest="50"/>
+
             <!-- 3. Блок счета и таймера -->
             <Grid Grid.Row="2"
-           Grid.ColumnSpan="2"
-           ColumnDefinitions="1.8*, *"
-           ColumnSpacing="15"
-           x:Name="StatisticGrid">
+                  Grid.ColumnSpan="2"
+                  ColumnDefinitions="1.8*, *"
+                  ColumnSpacing="15"
+                  x:Name="StatisticGrid">
+
                 <!-- Табло счета -->
                 <Frame CornerRadius="25" x:Name="ScoreFrame"
-    BackgroundColor="Transparent"
-                BorderColor="#D9D9D9"
-             Padding="0"
-    HorizontalOptions="Fill">
-                    <Grid x:Name="ScoreGrid"  RowDefinitions="0.5*, *">
+                       BackgroundColor="Transparent"
+                       BorderColor="#D9D9D9"
+                       Padding="0"
+                       HorizontalOptions="Fill">
+                    <Grid x:Name="ScoreGrid" RowDefinitions="0.5*, *">
                         <Frame
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand"
-                     BorderColor="#D9D9D9"
-                     CornerRadius="0"  Grid.Row="0"
-                     BackgroundColor="#D9D9D9" 
-                     Opacity="0.6" 
-                      Padding="10">
-                            <Label Text="Score"
-                         FontSize="18"
-                         FontAttributes="Bold"
-                            TextColor="#020136"
-                         HorizontalOptions="Center"/>
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            BorderColor="#D9D9D9"
+                            CornerRadius="0"  Grid.Row="0"
+                            BackgroundColor="#D9D9D9" 
+                            Opacity="0.6" 
+                            Padding="10">
+                            <Label Text="{loc:Translate Key=MainScore}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#020136"
+                                   HorizontalOptions="Center"/>
                         </Frame>
 
-
                         <Frame CornerRadius="0" Grid.Row="1"              
-                        HorizontalOptions="FillAndExpand"
-                        VerticalOptions="FillAndExpand"
-                        BackgroundColor="#D9D9D9"
-                        BorderColor="#D9D9D9"
-                        Opacity="0.75" 
-                        x:Name="FrameWithScoreStatistic"
-                        Padding="10">
+                               HorizontalOptions="FillAndExpand"
+                               VerticalOptions="FillAndExpand"
+                               BackgroundColor="#D9D9D9"
+                               BorderColor="#D9D9D9"
+                               Opacity="0.75" 
+                               x:Name="FrameWithScoreStatistic"
+                               Padding="10">
                             <Grid ColumnDefinitions="*, *, Auto"
-                       RowDefinitions="Auto, Auto"
-                       ColumnSpacing="15"
-                       RowSpacing="10"
-                       x:Name="GridWithScoreStatistic"    
-                       HorizontalOptions="Center">
+                                  RowDefinitions="Auto, Auto"
+                                  ColumnSpacing="15"
+                                  RowSpacing="10"
+                                  x:Name="GridWithScoreStatistic"    
+                                  HorizontalOptions="Center">
 
                                 <!-- Крестик -->
                                 <ContentView x:Name="RedLineOneCV" Grid.Row="0" Grid.Column="0"
-           WidthRequest="30" HeightRequest="26"
-           HorizontalOptions="Center">
+                                             WidthRequest="30" HeightRequest="26"
+                                             HorizontalOptions="Center">
                                     <Line X1="25" Y1="0" X2="0" Y2="25" x:Name="Line1"
-       Stroke="Red" StrokeThickness="4">
+                                         Stroke="Red" StrokeThickness="4">
                                         <Line.Shadow >
                                             <Shadow x:Name="RedLineOneShadow" Brush="Blue" 
-                 Offset="0,0"
-                 Radius="3" 
-                 Opacity="0"/>
+                                                    Offset="0,0"
+                                                    Radius="3" 
+                                                    Opacity="0"/>
                                         </Line.Shadow>
                                     </Line>
                                 </ContentView>
+
                                 <ContentView Grid.Row="0" Grid.Column="0" x:Name="RedLineTwoCV"
-           WidthRequest="26" HeightRequest="26"
-           HorizontalOptions="Center">
+                                             WidthRequest="26" HeightRequest="26"
+                                             HorizontalOptions="Center">
                                     <Line X1="0" Y1="0" X2="25" Y2="25" x:Name="Line2"
-       Stroke="Red" StrokeThickness="4">
+                                         Stroke="Red" StrokeThickness="4">
                                         <Line.Shadow>
                                             <Shadow x:Name="RedLineTwoShadow" Brush="Blue" 
-                 Offset="0,0" 
-                 Radius="3" 
-                 Opacity="0"/>
+                                                    Offset="0,0" 
+                                                    Radius="3" 
+                                                    Opacity="0"/>
                                         </Line.Shadow>
                                     </Line>
                                 </ContentView>
 
                                 <!-- Нолик -->
                                 <Ellipse Grid.Row="0" Grid.Column="1"
-       WidthRequest="26" HeightRequest="26"
-       Stroke="Green" StrokeThickness="4"
-                                  x:Name="EllipseGreen">
+                                         WidthRequest="26" HeightRequest="26"
+                                         Stroke="Green" StrokeThickness="4"
+                                         x:Name="EllipseGreen">
                                     <Ellipse.Shadow>
                                         <Shadow x:Name="EllipseShadow" Brush="Blue" 
-                                     Offset="0,0"
-                                     Radius="3" 
-                                     Opacity="0"/>
+                                                Offset="0,0"
+                                                Radius="3" 
+                                                Opacity="0"/>
                                     </Ellipse.Shadow>
                                 </Ellipse>
 
                                 <!-- Кнопка сброса -->
                                 <Button x:Name="ResetScoreButton"
-      Grid.Row="0" Grid.Column="2"
-      Text="Reset"
-                                 TextColor="#020136"
-      CornerRadius="20"
-                                 Clicked="ResetScoreButton_Clicked"
-      BackgroundColor="#FF0000"
-      WidthRequest="90"
-      HeightRequest="25"/>
+                                        Grid.Row="0" Grid.Column="2"
+                                        Text="{loc:Translate Key=MainResetScore}"
+                                        TextColor="#020136"
+                                        CornerRadius="20"
+                                        Clicked="ResetScoreButton_Clicked"
+                                        BackgroundColor="#FF0000"
+                                        WidthRequest="90"
+                                        HeightRequest="25"/>
 
                                 <!-- Счет -->
                                 <Label x:Name="XScoreLabel" 
-     Text="0" 
-                                TextColor="#020136"
-                 HorizontalOptions="Center"
-     Grid.Row="1" 
-     Grid.Column="0"
-     FontSize="16"/>
+                                       Text="0" 
+                                       TextColor="#020136"
+                                       HorizontalOptions="Center"
+                                       Grid.Row="1" 
+                                       Grid.Column="0"
+                                       FontSize="16"/>
 
                                 <Label x:Name="OScoreLabel"
-     Text="0" 
-                                TextColor="#020136"
-                 HorizontalOptions="Center"
-     Grid.Row="1" 
-     Grid.Column="1"
-     FontSize="16"/>
+                                       Text="0" 
+                                       TextColor="#020136"
+                                       HorizontalOptions="Center"
+                                       Grid.Row="1" 
+                                       Grid.Column="1"
+                                       FontSize="16"/>
                             </Grid>
                         </Frame>
                     </Grid>
                 </Frame>
+
                 <!-- Таймер -->
                 <Frame x:Name="TimerFrame"
-                Grid.Column="1"
-                BorderColor="#D9D9D9"
-        VerticalOptions="FillAndExpand"
-                CornerRadius="25"
-                BackgroundColor="Transparent"
-                Padding="0"
-                HorizontalOptions="FillAndExpand">
-                    <Grid  RowDefinitions="0.5*, *" x:Name="TimerGrid">
+                       Grid.Column="1"
+                       BorderColor="#D9D9D9"
+                       VerticalOptions="FillAndExpand"
+                       CornerRadius="25"
+                       BackgroundColor="Transparent"
+                       Padding="0"
+                       HorizontalOptions="FillAndExpand">
+                    <Grid RowDefinitions="0.5*, *" x:Name="TimerGrid">
                         <Frame
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand"
-                     CornerRadius="0"  Grid.Row="0"
-                     BorderColor="#D9D9D9"
-                     BackgroundColor="#D9D9D9" 
-                     Opacity="0.6" 
-                      Padding="10">
-                            <Label Text="Time"
-                            TextColor="#020136"
-                     FontSize="18"
-                     FontAttributes="Bold"
-                     HorizontalOptions="Center"/>
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand"
+                            CornerRadius="0"  Grid.Row="0"
+                            BorderColor="#D9D9D9"
+                            BackgroundColor="#D9D9D9" 
+                            Opacity="0.6" 
+                            Padding="10">
+                            <Label Text="{loc:Translate Key=MainTime}"
+                                   TextColor="#020136"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"/>
                         </Frame>
                         <Frame Grid.Row="1" CornerRadius="0"  Opacity="0.75" BackgroundColor="#D9D9D9"
-                                     HorizontalOptions="FillAndExpand"
-                             VerticalOptions="FillAndExpand"
-                        BorderColor="#D9D9D9"
-                        x:Name="FrameWithTimeLabel">
+                               HorizontalOptions="FillAndExpand"
+                               VerticalOptions="FillAndExpand"
+                               BorderColor="#D9D9D9"
+                               x:Name="FrameWithTimeLabel">
                             <Label x:Name="TimerLabel"
-                            TextColor="#020136"
-                     Text="00:00"
-                     FontSize="16"
-                     HorizontalOptions="Center"/>
+                                   TextColor="#020136"
+                                   Text="00:00"
+                                   FontSize="16"
+                                   HorizontalOptions="Center"/>
                         </Frame>
                     </Grid>
                 </Frame>
             </Grid>
+
             <Frame Grid.Row="3" x:Name="GameFrame" BackgroundColor="Transparent"
-            BorderColor="#D9D9D9"
-     Grid.ColumnSpan="2"
-     CornerRadius="20"
-     Padding="0"
-     HasShadow="True">
+                   BorderColor="#D9D9D9"
+                   Grid.ColumnSpan="2"
+                   CornerRadius="20"
+                   Padding="0"
+                   HasShadow="True">
                 <!-- 4. Многослойное игровое поле -->
                 <Grid x:Name="GameBoard"
-           VerticalOptions="FillAndExpand"
-               HorizontalOptions="FillAndExpand"
-           >
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand">
+
                     <!-- Слой 1: Фон -->
                     <Grid x:Name="BackgroundGrid"
-               RowDefinitions="*, *, *"
-               ColumnDefinitions="*, *, *"
-                    Opacity="0.5"
-               BackgroundColor="#D9D9D9">
+                          RowDefinitions="*, *, *"
+                          ColumnDefinitions="*, *, *"
+                          Opacity="0.5"
+                          BackgroundColor="#D9D9D9">
                         <!-- Горизонтальные линии -->
                         <BoxView Color="Black"
-                      HeightRequest="3"
-                      Grid.Row="0"
-                      Grid.ColumnSpan="3"
-                      VerticalOptions= "End"/>
+                                 HeightRequest="3"
+                                 Grid.Row="0"
+                                 Grid.ColumnSpan="3"
+                                 VerticalOptions="End"/>
                         <BoxView Color="Black"
-                      HeightRequest="3"
-                      Grid.Row="1"
-                      Grid.ColumnSpan="3"
-                      VerticalOptions="End"/>
+                                 HeightRequest="3"
+                                 Grid.Row="1"
+                                 Grid.ColumnSpan="3"
+                                 VerticalOptions="End"/>
 
                         <!-- Вертикальные линии -->
                         <BoxView Color="Black"
-                      WidthRequest="3"
-                      Grid.Column="0"
-                      Grid.RowSpan="3"
-                      HorizontalOptions="End"/>
+                                 WidthRequest="3"
+                                 Grid.Column="0"
+                                 Grid.RowSpan="3"
+                                 HorizontalOptions="End"/>
                         <BoxView Color="Black"
-                      WidthRequest="3"
-                      Grid.Column="1"
-                      Grid.RowSpan="3"
-                      HorizontalOptions="End"/>
+                                 WidthRequest="3"
+                                 Grid.Column="1"
+                                 Grid.RowSpan="3"
+                                 HorizontalOptions="End"/>
                     </Grid>
+
                     <!-- Слой 2: Нолики -->
                     <Grid x:Name="CirclesLayer"
-               IsVisible="True"
-               BackgroundColor="Transparent">
+                          IsVisible="True"
+                          BackgroundColor="Transparent">
                     </Grid>
+
                     <!-- Слой 3: Крестики -->
                     <Grid x:Name="CrossesLayer"
-               IsVisible="True"
-               BackgroundColor="Transparent">
+                          IsVisible="True"
+                          BackgroundColor="Transparent">
                     </Grid>
+
                     <!-- Слой 4: Линии -->
                     <Grid x:Name="LineLayer" 
-               BackgroundColor="Transparent"
-                   VerticalOptions="FillAndExpand"
- HorizontalOptions="FillAndExpand"
-                   >
-
+                          BackgroundColor="Transparent"
+                          VerticalOptions="FillAndExpand"
+                          HorizontalOptions="FillAndExpand">
                     </Grid>
 
                     <!-- Слой 5: Кнопки -->
                     <Grid x:Name="ButtonsLayer"
-               BackgroundColor="Transparent">
+                          BackgroundColor="Transparent">
                     </Grid>
                 </Grid>
             </Frame>
         </Grid>
     </Grid>
-   
 </ContentPage>

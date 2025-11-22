@@ -1,0 +1,13 @@
+﻿SettingsTitle=Impostazioni
+SettingsLanguage=Lingua
+SettingsMusic=Musica
+SettingsThemes=Temi
+SettingsMusicOn=Attivo
+SettingsMusicOff=Disattivo
+
+MainTitle=Tris
+MainHome=Home
+MainNewGame=Nuova partita
+MainScore=Punteggio
+MainTime=Tempo
+MainResetScore=Reimposta punteggio
