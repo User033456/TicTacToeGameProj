@@ -28,30 +28,32 @@ namespace TicTacToeGameProj
         {
             base.OnAppearing();
 
-            // Если хочешь, можешь не перечитывать конфиг, он уже есть из конструктора.
-            // Но если конфиг мог поменяться -> можно обновить:
             _config = ConfigManager.LoadConfig();
 
-            // --- Тема ---
+            // --- тема ---
             ThemeManager.Initialize(_config);
             ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
             ThemeName.Text = ThemeManager.CurrentTheme;
             ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
 
-            // --- Язык ---
+            // --- язык ---
             LanguageManager.Initialize(_config);
             LanguageValueLabel.Text = LanguageManager.CurrentLanguage.DisplayName;
-
-            // На всякий случай дёрнем локализацию ещё раз (если язык поменялся вне страницы)
             await LocalizationService.Instance.SetLanguageAsync(LanguageManager.CurrentLanguage.Key);
 
-            // --- Музыка ---
+            // --- музыка (применяем состояние из конфига) ---
             bool musicOn = _config.TryGetValue("music", out var m)
                            && string.Equals(m, "ON", StringComparison.OrdinalIgnoreCase);
-            MusicSwitch.IsToggled = musicOn;
 
-            _config["language"] = LanguageManager.CurrentLanguage.DisplayName;
-            ConfigManager.SaveConfig(_config);
+            MusicSwitch.Toggled -= MusicSwitch_Toggled; // чтобы не ловить лишний вызов
+            MusicSwitch.IsToggled = musicOn;
+            MusicSwitch.Toggled += MusicSwitch_Toggled;
+
+            // синхронизируем фактическое состояние плеера
+            if (musicOn && !MusicManager.IsPlaying)
+                await MusicManager.PlayAsync();
+            else if (!musicOn && MusicManager.IsPlaying)
+                MusicManager.Stop();
         }
 
         private async void OnLanguageTapped(object sender, EventArgs e)
@@ -104,13 +106,17 @@ namespace TicTacToeGameProj
         {
             await Navigation.PopAsync();
         }
-        private void MusicSwitch_Toggled(object sender, ToggledEventArgs e)
+        private async void MusicSwitch_Toggled(object sender, ToggledEventArgs e)
         {
             var isOn = e.Value;
 
             // значение для конфига в том же формате, что уже используешь
             _config["music"] = isOn ? "ON" : "OFF";
             ConfigManager.SaveConfig(_config);
+            if (isOn)
+                await MusicManager.PlayAsync();
+            else
+                MusicManager.Stop();
         }
     }
 }
