@@ -9,7 +9,7 @@ namespace TicTacToeGameProj
         public UIManager(Page page,int N = 3)
         {
             Pagee = page;
-            N = n;
+            n = N;
         }
         /// <summary>
         /// Загрузка крестиков
@@ -40,7 +40,9 @@ namespace TicTacToeGameProj
                         HorizontalOptions = LayoutOptions.Center,
                         VerticalOptions = LayoutOptions.Center,
                         WidthRequest = 60,
-                        HeightRequest = 60
+                        HeightRequest = 60,
+                        Padding = 3,
+                        Margin = 3
                     };
                     crossGrid.IsVisible = false;
                     // Первая диагональная линия (из левого верхнего в правый нижний угол)
@@ -111,7 +113,9 @@ namespace TicTacToeGameProj
                         HorizontalOptions = LayoutOptions.Center,
                         VerticalOptions = LayoutOptions.Center,
                         WidthRequest = 60,
-                        HeightRequest = 60
+                        HeightRequest = 60,
+                        Padding = 3,
+                        Margin = 3,
                     };
                     circleGrid.IsVisible= false;
                     // Создаем сам нолик (Ellipse)
@@ -142,7 +146,6 @@ namespace TicTacToeGameProj
         /// <summary>
         /// Создание игровых кнопок в формате n на n
         /// </summary>
-        /// <param name="n">Размерность</param>
         public void LoadButtons(out List<List<Button>> buttons, EventHandler Button_OnClick, Grid ButtonsGrid )
         {
             buttons = new List<List<Button>>();
@@ -288,6 +291,47 @@ namespace TicTacToeGameProj
             Grid.SetRowSpan(SecD, LinesGrid.RowDefinitions.Count);
             Grid.SetColumnSpan(SecD, LinesGrid.ColumnDefinitions.Count);
             LinesGrid.Children.Add(SecD);
+        }
+        /// <summary>
+        /// Создание разметки поля
+        /// </summary>
+        /// <param name="BgGrid"></param>
+        public void LoadBorderLines(Grid BgGrid)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                BgGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                BgGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+                if (i == n-1)
+                {
+                    break;
+                }
+                // 
+                var HorizontalView = new BoxView
+                {
+                    Color = Colors.Black,
+                    HeightRequest =3,
+                    VerticalOptions = LayoutOptions.End
+                };
+                Grid.SetRow(HorizontalView, i);
+                Grid.SetColumn(HorizontalView, 0);
+                Grid.SetColumnSpan(HorizontalView, n);
+                BgGrid.Children.Add(HorizontalView);
+  
+                // 
+                var VertView = new BoxView
+                {
+                    Color = Colors.Black,
+                    WidthRequest = 3,
+                    HorizontalOptions = LayoutOptions.End
+                };
+                Grid.SetRow(VertView, 0);
+                Grid.SetColumn(VertView, i);
+                Grid.SetRowSpan(VertView, n);
+                BgGrid.Children.Add(VertView);
+              
+               
+            }
         }
     }
 }

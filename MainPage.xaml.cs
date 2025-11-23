@@ -95,7 +95,7 @@
                 .SetLanguageAsync(LanguageManager.CurrentLanguage.Key)
                 .GetAwaiter()
                 .GetResult();
-            Load();
+            Load(3);
         }
         /// <summary>
         /// Загрузка элементов поля
@@ -109,6 +109,7 @@
             _manager.LoadButtons(out buttons, Button_OnClick, ButtonsLayer);
             _manager.LoadLines(out boxViewsHorizontal, out boxViewsVertical, LineLayer);
             _manager.LoadDiagonalLines(out MainD, out SecD, LineLayer);
+            _manager.LoadBorderLines(BackgroundGrid);
         }
         /// <summary>
         /// Сброс значения кнопок

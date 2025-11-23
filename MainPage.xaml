@@ -239,33 +239,10 @@
 
                     <!-- Слой 1: Фон -->
                     <Grid x:Name="BackgroundGrid"
-                          RowDefinitions="*, *, *"
-                          ColumnDefinitions="*, *, *"
+                         
                           Opacity="0.5"
                           BackgroundColor="#D9D9D9">
-                        <!-- Горизонтальные линии -->
-                        <BoxView Color="Black"
-                                 HeightRequest="3"
-                                 Grid.Row="0"
-                                 Grid.ColumnSpan="3"
-                                 VerticalOptions="End"/>
-                        <BoxView Color="Black"
-                                 HeightRequest="3"
-                                 Grid.Row="1"
-                                 Grid.ColumnSpan="3"
-                                 VerticalOptions="End"/>
-
-                        <!-- Вертикальные линии -->
-                        <BoxView Color="Black"
-                                 WidthRequest="3"
-                                 Grid.Column="0"
-                                 Grid.RowSpan="3"
-                                 HorizontalOptions="End"/>
-                        <BoxView Color="Black"
-                                 WidthRequest="3"
-                                 Grid.Column="1"
-                                 Grid.RowSpan="3"
-                                 HorizontalOptions="End"/>
+                        
                     </Grid>
 
                     <!-- Слой 2: Нолики -->
