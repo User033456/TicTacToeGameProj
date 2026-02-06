@@ -192,24 +192,23 @@
         {
             timerManager._sessionStartTime = DateTime.Now;
             ResetButtons();
+            StartGameFlag = FirstPlayerFlag;
             // Ход передаётся тому, кто в прошлый раз не начинал партию
-            if(!FirstPlayerFlag)
+            if(!StartGameFlag)
             {
-                FirstPlayerFlag = false;
+                StartGameFlag = false;
                 RedEnableGlow();
                 EllipseGlowDisable();
-                
             }
             else
             {
-                FirstPlayerFlag = true;
-                _botThinking = false;
+                StartGameFlag = true;
                 RedDisableGlow();
                 EllipseGlowEnable();
-                BotTurnIfNeeded();
             }
-            
-            //_ = BotTurnIfNeeded();
+            _botThinking = false;
+            FirstPlayerFlag = StartGameFlag;
+            _ = BotTurnIfNeeded();
         }
         /// <summary>
         /// Создание линии при победе
@@ -297,14 +296,12 @@
                     scoreController.UpdateScore();
                     await CreateLine();
                     NewGame();
-                    
                     this.IsEnabled = true;
                     return;
                 }
-                
+
                 RedDisableGlow();
                 EllipseGlowEnable();
-                BotTurnIfNeeded();
             }
             else
             {
@@ -335,7 +332,6 @@
             {
                 NewGame();
                 this.IsEnabled = true;
-
                 return;
             }
 
@@ -348,7 +344,19 @@
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void NewGameStartMenuItem_OnClick(object sender, EventArgs e) => NewGame();
+        private void NewGameStartMenuItem_OnClick(object sender, EventArgs e)
+        {
+            if (FirstPlayerFlag)
+            {
+                FirstPlayerFlag = false;
+            }
+            else
+            {
+                FirstPlayerFlag = true;
+            }
+            _botThinking = false;
+                NewGame();
+        }
         private void ResetScoreButton_Clicked(object sender, EventArgs e) => scoreController.Reset();
 
         private void ContentPage_Loaded(object sender, EventArgs e) { }
@@ -430,7 +438,6 @@
                 // подсветка хода крестика
                 RedEnableGlow();
                 EllipseGlowDisable();
-                
             }
             finally
             {
