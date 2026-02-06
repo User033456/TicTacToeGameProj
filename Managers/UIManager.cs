@@ -4,7 +4,7 @@ namespace TicTacToeGameProj
     public class UIManager
     {
         private Page Pagee;
-
+        List<List<Grid>> Xel;
         private int n = 3;
         public UIManager(Page page,int N = 3)
         {
@@ -83,6 +83,7 @@ namespace TicTacToeGameProj
                     XGrid.Children.Add(crossGrid);
                 }
             }
+            Xel = Xelements;
         }
         /// <summary>
         /// Загрузка ноликов
@@ -332,6 +333,58 @@ namespace TicTacToeGameProj
               
                
             }
+        }
+        /// <summary>
+        /// Отработка анимации победы
+        /// </summary>
+        /// <param name="myBoxView"></param>
+        /// <returns></returns>
+        public async Task AnimateScaleAppearance(Microsoft.Maui.Controls.Shapes.Path myBoxView, bool FirstPlayerFlag)
+        {
+            myBoxView.IsVisible = true;
+            if (!FirstPlayerFlag)
+            {
+                myBoxView.BackgroundColor = Colors.SpringGreen;
+                myBoxView.Background = Colors.SpringGreen;
+                myBoxView.Stroke = Colors.SpringGreen;
+            }
+            else
+            {
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.Stroke = Colors.Red;
+            }
+            // Анимация увеличения масштаба с эффектом "пружины"
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
+            // Дополнительно: небольшая вибрация после появления
+            await myBoxView.ScaleTo(1.05, 1000, Easing.BounceOut);
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
+        }
+        /// <summary>
+        /// Анимация появления линии
+        /// </summary>
+        /// <param name="myBoxView"></param>
+        /// <returns></returns>
+        public async Task AnimateScaleAppearance(BoxView myBoxView, bool FirstPlayerFlag)
+        {
+            myBoxView.IsVisible = true;
+            if (!FirstPlayerFlag)
+            {
+                myBoxView.BackgroundColor = Colors.SpringGreen;
+                myBoxView.Background = Colors.SpringGreen;
+                myBoxView.Color = Colors.SpringGreen;
+            }
+            else
+            {
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.BackgroundColor = Colors.Red;
+                myBoxView.Color = Colors.Red;
+            }
+            // Анимация увеличения масштаба с эффектом "пружины"
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
+            // Дополнительно: небольшая вибрация после появления
+            await myBoxView.ScaleTo(1.05, 1000, Easing.BounceOut);
+            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
         }
     }
 }

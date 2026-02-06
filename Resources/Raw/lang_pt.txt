@@ -11,3 +11,9 @@ MainNewGame=Novo jogo
 MainScore=Pontuação
 MainTime=Tempo
 MainResetScore=Reiniciar placar
+SettingsVsBot=Jogar contra o bot
+SettingsBotDifficulty=Dificuldade do bot
+
+BotDifficultyEasy=Fácil
+BotDifficultyNormal=Normal
+BotDifficultyHard=Difícil

@@ -24,7 +24,7 @@
                Aspect="AspectFill" />
 
         <Grid x:Name="MainGrid"
-              RowDefinitions="0.1*, 0.2*, 0.2*, 0.2*, 0.4*"
+              RowDefinitions="0.1*, 0.2*, 0.2*, 0.2*, 0.2*, 0.2*,0.3*"
               ColumnDefinitions="*,*"
               RowSpacing="15"
               ColumnSpacing="15"
@@ -136,9 +136,54 @@
                             Toggled="MusicSwitch_Toggled"/>
                 </Grid>
             </Frame>
-
-            <!-- THEMES -->
+            <!-- VsBot -->
             <Frame Grid.Row="3" Grid.ColumnSpan="2"
+            CornerRadius="25"
+            BackgroundColor="#D9D9D9"
+            BorderColor="#D9D9D9"
+            Opacity="0.75"
+            Padding="12">
+                <Grid ColumnDefinitions="*,Auto,Auto"
+               ColumnSpacing="10"
+               VerticalOptions="Center">
+                    <Label Text="{loc:Translate Key=SettingsVsBot}"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    TextColor="#020136"
+                    VerticalOptions="Center"/>
+                    <Frame Grid.Column="1"
+                    Padding="8,4"
+                    BackgroundColor="#D9D9D9"
+                    CornerRadius="14"
+                    HasShadow="False"
+                    VerticalOptions="Center">
+                        <Label 
+                        FontSize="14"
+                        TextColor="#020136"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                       x:Name="VsBotValueLabel"
+Text="{loc:Translate Key=SettingsMusicOff}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+              Binding="{Binding Source={x:Reference VsBotSwitch}, Path=IsToggled}"
+              Value="True">
+                                    <Setter Property="Text"
+             Value="{loc:Translate Key=SettingsMusicOn}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Frame>
+                    <Switch x:Name="VsBotSwitch"
+                     Grid.Column="2"
+                     Scale="0.9"
+                     VerticalOptions="Center"
+                     IsToggled="False"
+                     Toggled="VsBotSwitch_Toggled"/>
+                </Grid>
+            </Frame>
+            <!-- THEMES -->
+            <Frame Grid.Row="4" Grid.ColumnSpan="2"
                    CornerRadius="25"
                    BackgroundColor="#D9D9D9"
                    BorderColor="#D9D9D9"
@@ -214,8 +259,37 @@
                     </HorizontalStackLayout>
                 </Grid>
             </Frame>
+            <Frame Grid.Row="5" Grid.ColumnSpan="2"
+       CornerRadius="25"
+       BackgroundColor="#D9D9D9"
+       BorderColor="#D9D9D9"
+       Opacity="0.75"
+       Padding="12">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <Label Text="{loc:Translate Key=SettingsBotDifficulty}"
+               FontSize="14"
+               FontAttributes="Bold"
+               TextColor="#020136"
+               VerticalOptions="Center" />
+                    <Frame Grid.Column="1"
+               Padding="8,4"
+               BackgroundColor="#D9D9D9"
+               CornerRadius="14"
+               HasShadow="False">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnBotDifficultyTapped"/>
+                        </Frame.GestureRecognizers>
 
-            <Grid Grid.Row="5" Grid.ColumnSpan="2"/>
+                        <Label x:Name="BotDifficultyValueLabel"
+                   Text="English"
+                   FontSize="14"
+                   TextColor="#020136"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+                    </Frame>
+                </Grid>
+            </Frame>
+            <Grid Grid.Row="6" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>
 </ContentPage>

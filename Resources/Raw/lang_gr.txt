@@ -11,3 +11,9 @@ MainNewGame=Νέο παιχνίδι
 MainScore=Σκορ
 MainTime=Χρόνος
 MainResetScore=Επαναφορά βαθμολογίας
+SettingsVsBot=Παιχνίδι με bot
+SettingsBotDifficulty=Δυσκολία bot
+
+BotDifficultyEasy=Εύκολο
+BotDifficultyNormal=Κανονικό
+BotDifficultyHard=Δύσκολο

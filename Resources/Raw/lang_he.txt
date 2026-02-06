@@ -11,3 +11,9 @@ MainNewGame=משחק חדש
 MainScore=ניקוד
 MainTime=זמן
 MainResetScore=איפוס ניקוד
+SettingsVsBot=משחק נגד בוט
+SettingsBotDifficulty=רמת קושי הבוט
+
+BotDifficultyEasy=קל
+BotDifficultyNormal=רגיל
+BotDifficultyHard=קשה

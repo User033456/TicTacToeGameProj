@@ -11,3 +11,9 @@ MainNewGame=新游戏
 MainScore=得分
 MainTime=时间
 MainResetScore=重置得分
+SettingsVsBot=与机器人对战
+SettingsBotDifficulty=机器人难度
+
+BotDifficultyEasy=简单
+BotDifficultyNormal=普通
+BotDifficultyHard=困难

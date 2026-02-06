@@ -94,4 +94,9 @@
 	<ItemGroup>
 		<MauiAsset Include="Resources\Raw\**\*.*" />
 	</ItemGroup>
+	<ItemGroup>
+	  <MauiXaml Update="Popups\BotDifficultyPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
 </Project>

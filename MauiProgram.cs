@@ -16,7 +16,7 @@ namespace TicTacToeGameProj
             builder.UseMauiCommunityToolkit();
             builder.UseMauiApp<App>().UseMauiCommunityToolkit();
 #if DEBUG
-            builder.Logging.AddDebug();
+            
             
 #endif
 

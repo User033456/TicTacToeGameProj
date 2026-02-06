@@ -2,6 +2,12 @@
 {
     public partial class MainPage : ContentPage
     {
+        private bool vsBot = true;
+        private int BotDifficult;
+        private bool _botThinking = false;
+        private  TicTacToeGameProj.IBotPlayer _bot;
+        private bool LastVsBot; // прошлый режим игры с ботом до открытия страницы настроек
+        private int LastBotDifficult;
         private int size = 3;
         private Dictionary<string, string> _config = new();
         private UIManager _manager;
@@ -19,24 +25,67 @@
         private bool FirstPlayerFlag = false;
         private bool StartGameFlag;
         /// <summary>
+        /// Создание бота
+        /// </summary>
+        private void CreateBot()
+        {
+            // Получение сложности бота и создание нового бота
+            switch (_config["botdifficulty"].ToLower())
+            {
+                case "easy":
+                    BotDifficult = (((int)BotDifficulty.Easy));
+                    _bot = new MinimaxBot(BotDifficulty.Easy);
+                    break;
+                case "normal":
+                    BotDifficult = (((int)BotDifficulty.Normal));
+                    _bot = new  MinimaxBot(BotDifficulty.Normal);
+                    break;
+                case "hard":
+                    BotDifficult = (((int)BotDifficulty.Hard));
+                    _bot = new MinimaxBot(BotDifficulty.Hard);
+                    break;
+            }
+        }
+        /// <summary>
         /// Загрузка фона
         /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            // перечитываем конфиг, если он мог поменяться
+            // пересчитывание конфига
             _config = ConfigManager.LoadConfig();
 
             // тема
             ThemeManager.Initialize(_config);
             ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
 
-            // язык (обновляем локализацию, если вдруг изменился)
+            // обновление локализации
             LanguageManager.Initialize(_config);
             await LocalizationService.Instance.SetLanguageAsync(LanguageManager.CurrentLanguage.Key);
+            bool vsBotNow = _config.TryGetValue("vsbot", out var v)
+                    && string.Equals(v, "ON", StringComparison.OrdinalIgnoreCase);
+            BotDifficult = _config["botdifficulty"].ToLower() switch
+            {
+                "easy" => (((int)BotDifficulty.Easy)),
+                "normal" => (((int)BotDifficulty.Normal)),
+                "hard" => (((int)BotDifficulty.Hard))
+            };
+            // Если бота включили/ выключили - новая игра
+            if (vsBotNow != LastVsBot)
+            {
+                LastVsBot = vsBotNow;
+                vsBot = vsBotNow;
+                NewGame(); // сразу новая партия
+            }
+            // Изменение сложности бота - новая игра
+            if ((LastBotDifficult != BotDifficult) && vsBot)
+            {
+                LastBotDifficult = BotDifficult;
+                NewGame();
+                CreateBot();
+            }
 
-            // если у тебя есть логика таймера/счёта в OnAppearing — оставь её ниже
         }
         protected void Load(int n = 3)
         {
@@ -60,6 +109,13 @@
             }
             FirstPlayerFlag = StartGameFlag;
             LoadUI(n);
+            vsBot = (_config["vsbot"] == "ON") ? true : false;
+           CreateBot();
+           // _bot = new MinimaxBot(BotDifficulty.Hard);
+            _ = BotTurnIfNeeded();
+            LastVsBot = vsBot;
+            LastBotDifficult = BotDifficult;
+
         }
         /// <summary>
         /// Конструктор n на n 
@@ -101,15 +157,16 @@
         /// Загрузка элементов поля
         /// </summary>
         /// <param name="n">размерность поля</param>
-        protected void LoadUI(int n = 3)
+        protected async void LoadUI(int n = 3)
         {
             _manager = new UIManager(this,n);
-            _manager.LoadX(out Xelements,CrossesLayer);
+             _manager.LoadX(out Xelements,CrossesLayer);
             _manager.Load0(out Zeroelements, CirclesLayer);
             _manager.LoadButtons(out buttons, Button_OnClick, ButtonsLayer);
             _manager.LoadLines(out boxViewsHorizontal, out boxViewsVertical, LineLayer);
             _manager.LoadDiagonalLines(out MainD, out SecD, LineLayer);
             _manager.LoadBorderLines(BackgroundGrid);
+
         }
         /// <summary>
         /// Сброс значения кнопок
@@ -149,58 +206,7 @@
                 EllipseGlowEnable();
             }
             FirstPlayerFlag = StartGameFlag;
-        }
-        /// <summary>
-        /// Анимация появления линии
-        /// </summary>
-        /// <param name="myBoxView"></param>
-        /// <returns></returns>
-        async Task AnimateScaleAppearance(BoxView myBoxView)
-        {
-            myBoxView.IsVisible = true;
-            if(!FirstPlayerFlag)
-            {
-                myBoxView.BackgroundColor = Colors.SpringGreen;
-                myBoxView.Background = Colors.SpringGreen;
-                myBoxView.Color = Colors.SpringGreen;
-            }
-            else
-            {
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.Color = Colors.Red;
-            }
-            // Анимация увеличения масштаба с эффектом "пружины"
-            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
-            // Дополнительно: небольшая вибрация после появления
-            await myBoxView.ScaleTo(1.05, 1000, Easing.BounceOut);
-            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
-        }
-        /// <summary>
-        /// Отработка анимации победы
-        /// </summary>
-        /// <param name="myBoxView"></param>
-        /// <returns></returns>
-        async Task AnimateScaleAppearance(Microsoft.Maui.Controls.Shapes.Path myBoxView)
-        {
-            myBoxView.IsVisible = true;
-            if (!FirstPlayerFlag)
-            {
-                myBoxView.BackgroundColor = Colors.SpringGreen;
-                myBoxView.Background = Colors.SpringGreen;
-                myBoxView.Stroke = Colors.SpringGreen;
-            }
-            else
-            {
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.Stroke = Colors.Red;
-            }
-            // Анимация увеличения масштаба с эффектом "пружины"
-            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
-            // Дополнительно: небольшая вибрация после появления
-            await myBoxView.ScaleTo(1.05, 1000, Easing.BounceOut);
-            await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
+            _ = BotTurnIfNeeded();
         }
         /// <summary>
         /// Создание линии при победе
@@ -212,20 +218,20 @@
             switch (CheckWin.WinType)
             {
                 case "IsDiagonalWin":
-                    await AnimateScaleAppearance(MainD);
+                    await _manager.AnimateScaleAppearance(MainD, FirstPlayerFlag);
                     MainD.IsVisible = false;
                     break;
                 case "IsSecondDiagonalWin":
-                    await AnimateScaleAppearance(SecD);
+                    await _manager.AnimateScaleAppearance(SecD, FirstPlayerFlag);
                     SecD.IsVisible = false;
                     break;
                 case "IsVerticalWin":
-                    await AnimateScaleAppearance(boxViewsVertical[CheckWin.WinCoordinate]);
+                    await _manager.AnimateScaleAppearance(boxViewsVertical[CheckWin.WinCoordinate], FirstPlayerFlag);
                     //await Task.Delay();
                     boxViewsVertical[CheckWin.WinCoordinate].IsVisible = false;
                     break;
                 case "IsHorizontallWin":
-                    await AnimateScaleAppearance(boxViewsHorizontal[CheckWin.WinCoordinate]);
+                    await _manager.AnimateScaleAppearance(boxViewsHorizontal[CheckWin.WinCoordinate], FirstPlayerFlag);
                     boxViewsHorizontal[CheckWin.WinCoordinate].IsVisible = false;
                     break;
             }
@@ -261,74 +267,76 @@
         /// <param name="e"></param>
         private async void Button_OnClick(object sender, EventArgs e)
         {
+            // Если бот включён и сейчас очередь нолика — человеку кликать нельзя
+            if (vsBot && FirstPlayerFlag == true) return;
+
             this.IsEnabled = false;
+
             var button = sender as Button;
             int row = Grid.GetRow(button);
-            // Получаем номер столбца
             int column = Grid.GetColumn(button);
+
             // Ходил крестик
             if (FirstPlayerFlag == false)
             {
                 button.Text = "X";
                 Xelements[row][column].IsVisible = true;
                 button.FontSize = 0;
-                // Блокировка нажатия кнопки, чтобы не допустить возможности повторного хода
                 button.IsEnabled = false;
-                FirstPlayerFlag = true;
-                // Проверка на то, случилась ли победа после данного хода
+
+                FirstPlayerFlag = true; // теперь очередь нолика
+
                 if (CheckWin.IsWin(buttons, 'X') == true)
                 {
-                    // Изменение счёта победителя
-                    if (!FirstPlayerFlag)
-                    {
-                        scoreController.ZeroWindCount++;
-                    }
-                    else
-                    {
-                        scoreController.XWindCount++;
-                    }
+                    if (!FirstPlayerFlag) scoreController.ZeroWindCount++;
+                    else scoreController.XWindCount++;
+
                     scoreController.UpdateScore();
                     await CreateLine();
                     NewGame();
+                    this.IsEnabled = true;
+                    return;
                 }
+
                 RedDisableGlow();
                 EllipseGlowEnable();
             }
-            // Ходил нолик
             else
             {
                 button.Text = "0";
                 Zeroelements[row][column].IsVisible = true;
                 button.FontSize = 0;
-          
-                // Блокировка нажатия кнопки, чтобы не допустить возможности повторного хода
                 button.IsEnabled = false;
+
                 FirstPlayerFlag = false;
+
                 if (CheckWin.IsWin(buttons, '0') == true)
                 {
-                    // Изменение счёта победителя
-                    if (!FirstPlayerFlag)
-                    {
-                        scoreController.ZeroWindCount++;
-                    }
-                    else
-                    {
-                        scoreController.XWindCount++;
-                    }
+                    if (!FirstPlayerFlag) scoreController.ZeroWindCount++;
+                    else scoreController.XWindCount++;
+
                     scoreController.UpdateScore();
                     await CreateLine();
                     NewGame();
+                    this.IsEnabled = true;
+                    return;
                 }
+
                 RedEnableGlow();
                 EllipseGlowDisable();
             }
-            // Если поле заполнено, но никто не победил
-            if(CheckWin.IsDraw(buttons))
+
+            if (CheckWin.IsDraw(buttons))
             {
                 NewGame();
+                this.IsEnabled = true;
+                return;
             }
+
             this.IsEnabled = true;
+            await BotTurnIfNeeded();
         }
+
         /// <summary>
         /// Обработчик начала новой игры
         /// </summary>
@@ -339,6 +347,90 @@
 
         private void ContentPage_Loaded(object sender, EventArgs e) { }
 
-        private async void SettingsButton_Clicked(object sender, EventArgs e) =>  await Navigation.PushAsync(new SettingsPage());
+        private async void SettingsButton_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new SettingsPage());
+        }
+        /// <summary>
+        /// Получение состояния игрового поля (для бота)
+        /// </summary>
+        /// <returns></returns>
+        private int[] GetBoard3x3()
+        {
+            var board = new int[9]; // 0 empty, 1 = X, -1 = 0
+            for (int r = 0; r < 3; r++)
+                for (int c = 0; c < 3; c++)
+                {
+                    var t = buttons[r][c].Text;
+                    int idx = r * 3 + c;
+                    board[idx] = t == "X" ? 1 : (t == "0" ? -1 : 0);
+                }
+            return board;
+        }
+        /// <summary>
+        /// Ход бота (бот играет за 0) — вызывается, когда очередь нолика.
+        /// </summary>
+        private async Task BotTurnIfNeeded()
+        {
+            // Бот выключен или уже думает
+            if (!vsBot || _botThinking) return;
+            // Бот ходит только когда очередь 0
+            if (FirstPlayerFlag != true) return;
+            _botThinking = true;
+            this.IsEnabled = false;
+
+            try
+            {
+                // Подсветка хода для нолика
+                RedDisableGlow();
+                EllipseGlowEnable();
+
+                int[] board = GetBoard3x3();
+
+                // считаем ход в фоне, чтобы UI не лагал
+                int move = await Task.Run(() => _bot.ChooseMove(board, botPlayer: -1)); // -1 = 0
+
+                if (move < 0) return;
+
+                int row = move / 3;
+                int col = move % 3;
+
+                buttons[row][col].Text = "0";
+                Zeroelements[row][col].IsVisible = true;
+                buttons[row][col].FontSize = 0;
+                buttons[row][col].IsEnabled = false;
+
+                // после хода 0 очередь X
+                FirstPlayerFlag = false;
+
+                if (CheckWin.IsWin(buttons, '0') == true)
+                {
+                    
+                    if (!FirstPlayerFlag) scoreController.ZeroWindCount++;
+                    else scoreController.XWindCount++;
+
+                    scoreController.UpdateScore();
+                    await CreateLine();
+                    NewGame();
+                    return;
+                }
+
+                if (CheckWin.IsDraw(buttons))
+                {
+                    NewGame();
+                    return;
+                }
+
+                // подсветка хода крестика
+                RedEnableGlow();
+                EllipseGlowDisable();
+            }
+            finally
+            {
+                this.IsEnabled = true;
+                _botThinking = false;
+            }
+        }
+        
     }
 }

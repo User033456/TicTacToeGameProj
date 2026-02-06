@@ -6,6 +6,7 @@
         {
             InitializeComponent();
             StartMusicFromConfig();
+
         }
         private async void StartMusicFromConfig()
         {

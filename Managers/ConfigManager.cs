@@ -14,7 +14,9 @@
             {
                 { "theme", "BASIC" },
                 { "language", "English" },
-                { "music", "OFF" } // OFF или ON
+                { "music", "OFF" }, // OFF или ON
+                { "vsbot", "OFF" },// OFF или ON
+                { "botdifficulty", "Easy" } // Easy, Normal, Hard
             };
 
         /// <summary>

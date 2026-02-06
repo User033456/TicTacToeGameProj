@@ -36,6 +36,7 @@
             <HorizontalStackLayout Grid.Column="0">
                 <Button x:Name="HomeButton" 
                         Text="{loc:Translate Key=MainHome}"
+                        IsEnabled="False"
                         CornerRadius="25"
                         BackgroundColor="#D9D9D9"
                         TextColor="#020136"

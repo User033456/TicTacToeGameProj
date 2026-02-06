@@ -11,3 +11,9 @@ MainNewGame=Новая игра
 MainScore=Счёт
 MainTime=Время
 MainResetScore=Сброс
+SettingsVsBot=Игра против бота
+SettingsBotDifficulty=Сложность бота
+
+BotDifficultyEasy=Лёгкая
+BotDifficultyNormal=Нормальная
+BotDifficultyHard=Сложная

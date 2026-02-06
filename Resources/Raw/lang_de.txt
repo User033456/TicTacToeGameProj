@@ -11,3 +11,9 @@ MainNewGame=Neues Spiel
 MainScore=Punkte
 MainTime=Zeit
 MainResetScore=Punkte zurücksetzen
+SettingsVsBot=Spiel gegen Bot
+SettingsBotDifficulty=Bot-Schwierigkeit
+
+BotDifficultyEasy=Leicht
+BotDifficultyNormal=Normal
+BotDifficultyHard=Schwer

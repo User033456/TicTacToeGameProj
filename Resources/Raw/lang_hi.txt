@@ -11,3 +11,9 @@ MainNewGame=नया खेल
 MainScore=स्कोर
 MainTime=समय
 MainResetScore=स्कोर रीसेट करें
+SettingsVsBot=बॉट के खिलाफ खेलें
+SettingsBotDifficulty=बॉट की कठिनाई
+
+BotDifficultyEasy=आसान
+BotDifficultyNormal=सामान्य
+BotDifficultyHard=कठिन
