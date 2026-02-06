@@ -193,20 +193,23 @@
             timerManager._sessionStartTime = DateTime.Now;
             ResetButtons();
             // Ход передаётся тому, кто в прошлый раз не начинал партию
-            if(StartGameFlag)
+            if(!FirstPlayerFlag)
             {
-                StartGameFlag = false;
+                FirstPlayerFlag = false;
                 RedEnableGlow();
                 EllipseGlowDisable();
+                
             }
             else
             {
-                StartGameFlag = true;
+                FirstPlayerFlag = true;
+                _botThinking = false;
                 RedDisableGlow();
                 EllipseGlowEnable();
+                BotTurnIfNeeded();
             }
-            FirstPlayerFlag = StartGameFlag;
-            _ = BotTurnIfNeeded();
+            
+            //_ = BotTurnIfNeeded();
         }
         /// <summary>
         /// Создание линии при победе
@@ -294,12 +297,14 @@
                     scoreController.UpdateScore();
                     await CreateLine();
                     NewGame();
+                    
                     this.IsEnabled = true;
                     return;
                 }
-
+                
                 RedDisableGlow();
                 EllipseGlowEnable();
+                BotTurnIfNeeded();
             }
             else
             {
@@ -330,6 +335,7 @@
             {
                 NewGame();
                 this.IsEnabled = true;
+
                 return;
             }
 
@@ -424,6 +430,7 @@
                 // подсветка хода крестика
                 RedEnableGlow();
                 EllipseGlowDisable();
+                
             }
             finally
             {
