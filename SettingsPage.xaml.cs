@@ -1,10 +1,24 @@
 ﻿using CommunityToolkit.Maui.Views;
+using System.Diagnostics;
 namespace TicTacToeGameProj
 {
     public partial class SettingsPage : ContentPage
     {
         private Dictionary<string, string> _config = new();
+        string ColorToHex(Color color)
+        {
+            int r = (int)(color.Red * 255);
+            int g = (int)(color.Green * 255);
+            int b = (int)(color.Blue * 255);
 
+            return $"#{r:X2}{g:X2}{b:X2}";
+        }
+        private async Task UpdateColors()
+        {
+            Line1.Stroke = new SolidColorBrush(Color.FromArgb(_config["xcolor"]));
+            Line2.Stroke = new SolidColorBrush(Color.FromArgb(_config["xcolor"]));
+            EllipseGreen.Stroke = new SolidColorBrush(Color.FromArgb(_config["zerocolor"]));
+        }
         public SettingsPage()
         {
             // 1. Загружаем конфиг
@@ -22,6 +36,7 @@ namespace TicTacToeGameProj
 
             // 4. Только теперь создаём визуальное дерево и биндинги
             InitializeComponent();
+            
         }
         private async void ChangeBotDifLevel()
         {
@@ -31,6 +46,7 @@ namespace TicTacToeGameProj
                 "Normal" => LocalizationService.Instance["BotDifficultyNormal"],
                 "Hard" => LocalizationService.Instance["BotDifficultyHard"]
             };
+
         }
         protected override async void OnAppearing()
         {
@@ -59,14 +75,14 @@ namespace TicTacToeGameProj
             VsBotSwitch.IsToggled = VsBotOn;
             VsBotSwitch.Toggled += VsBotSwitch_Toggled;
             ChangeBotDifLevel();
-          
+            await UpdateColors();
         }
         private async void LoadTheme()
         {
             // --- тема ---
             ThemeManager.Initialize(_config);
             ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
-            ThemeName.Text = ThemeManager.CurrentTheme;
+            ThemeName.Text = ThemeManager.CurrentTheme.ToUpper();
             ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
         }
         private async void LoadMusic()
@@ -109,7 +125,7 @@ namespace TicTacToeGameProj
         }
         private async void OnBotDifficultyTapped(object sender, EventArgs e)
         {
-            
+
             var popup = new BotDifficultyPopup(_config["botdifficulty"]);
             var result = await this.ShowPopupAsync(popup) as string;
             if (string.IsNullOrEmpty(result))
@@ -117,6 +133,18 @@ namespace TicTacToeGameProj
             _config["botdifficulty"] = result;
             ConfigManager.SaveConfig(_config);
             ChangeBotDifLevel();
+           /* try
+            {
+                var popup = new ColorPickerPopup(Colors.Red);
+                var result = await this.ShowPopupAsync(popup);
+                BotDifficultyValueLabel.Background = result is Color c ? new SolidColorBrush(c) : null;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Popup error", ex.ToString(), "OK");
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex);
+            }*/
         }
 
         private void OnPrevThemeTapped(object sender, EventArgs e)
@@ -124,9 +152,9 @@ namespace TicTacToeGameProj
             ThemeManager.SwitchTheme(-1);
             ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
             ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
-            ThemeName.Text = ThemeManager.CurrentTheme;
+            ThemeName.Text = ThemeManager.CurrentTheme.ToUpper();
 
-            _config["theme"] = ThemeManager.CurrentTheme;
+            _config["theme"] = ThemeManager.CurrentTheme.ToLower();
             ConfigManager.SaveConfig(_config);
         }
 
@@ -135,9 +163,9 @@ namespace TicTacToeGameProj
             ThemeManager.SwitchTheme(+1);
             ThemeManager.ApplyBackgroundImage(ThemeBackgroundImage);
             ThemePreviewImage.Source = $"{ThemeManager.CurrentTheme}.png";
-            ThemeName.Text = ThemeManager.CurrentTheme;
+            ThemeName.Text = ThemeManager.CurrentTheme.ToUpper();
 
-            _config["theme"] = ThemeManager.CurrentTheme;
+            _config["theme"] = ThemeManager.CurrentTheme.ToLower();
             ConfigManager.SaveConfig(_config);
         }
 
@@ -164,6 +192,51 @@ namespace TicTacToeGameProj
             // значение для конфига в том же формате, что уже используешь
             _config["vsbot"] = isOn ? "ON" : "OFF";
             ConfigManager.SaveConfig(_config);
+        }
+
+        private async void ChangeXColor_Clicked(object sender, EventArgs e)
+        {
+             try
+           {
+               var popup = new ColorPickerPopup(Colors.Red);
+               var result = await this.ShowPopupAsync(popup);
+               var hexcod = result is Color c ? ColorToHex(c) : null;
+                if (hexcod != null)
+                {
+                    _config["xcolor"] = hexcod;
+                    ConfigManager.SaveConfig(_config);
+                    UpdateColors();
+                }
+            }
+           catch (Exception ex)
+           {
+               await DisplayAlert("Popup error", ex.ToString(), "OK");
+               Debug.WriteLine(ex);
+               Console.WriteLine(ex);
+           }
+        }
+        private async void ChangeZeroColor_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var popup = new ColorPickerPopup(Colors.Red);
+                var result = await this.ShowPopupAsync(popup);
+                var hexcod = result is Color c ? ColorToHex(c) : null;
+                if (hexcod != null)
+                {
+                    _config["zerocolor"] = hexcod;
+                    ConfigManager.SaveConfig(_config);
+                    UpdateColors();
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Popup error", ex.ToString(), "OK");
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex);
+                
+
+            }
         }
     }
 }

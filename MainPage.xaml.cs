@@ -14,13 +14,6 @@
         private ScoreController scoreController;
         private WinCheck CheckWin = new WinCheck(); 
         private TimerManager timerManager;
-        private List<List<Button>> buttons = new List<List<Button>>(); // Кнопки игрового поля
-        private List<List<Grid>> Xelements = new List<List<Grid>>(); // Таблица крестиков
-        private List<List<Grid>> Zeroelements = new List<List<Grid>>(); // Таблица ноликов
-        private List<BoxView> boxViewsHorizontal= new List<BoxView>();
-        private List<BoxView> boxViewsVertical = new List<BoxView>();
-        private Microsoft.Maui.Controls.Shapes.Path MainD = new();
-        private Microsoft.Maui.Controls.Shapes.Path SecD = new();
         // false -ходит крестик true - нолик
         private bool FirstPlayerFlag = false;
         private bool StartGameFlag;
@@ -85,7 +78,16 @@
                 NewGame();
                 CreateBot();
             }
-
+            ChangeActualColors();
+        }
+        /// <summary>
+        /// Меняет цвета крестика и нолика на актуальные
+        /// </summary>
+        private void ChangeActualColors()
+        {
+            _config = ConfigManager.LoadConfig();
+            _manager.XColor = Color.FromArgb(_config["xcolor"]);
+            _manager.ZeroColor = Color.FromArgb(_config["zerocolor"]);
         }
         protected void Load(int n = 3)
         {
@@ -134,6 +136,7 @@
                 .GetAwaiter()
                 .GetResult();
             size = s;
+
             Load(s);
         }
         /// <summary>
@@ -159,39 +162,23 @@
         /// <param name="n">размерность поля</param>
         protected async void LoadUI(int n = 3)
         {
-            _manager = new UIManager(this,n);
-             _manager.LoadX(out Xelements,CrossesLayer);
-            _manager.Load0(out Zeroelements, CirclesLayer);
-            _manager.LoadButtons(out buttons, Button_OnClick, ButtonsLayer);
-            _manager.LoadLines(out boxViewsHorizontal, out boxViewsVertical, LineLayer);
-            _manager.LoadDiagonalLines(out MainD, out SecD, LineLayer);
-            _manager.LoadBorderLines(BackgroundGrid);
-
+            _manager = new UIManager(this,Line1,Line2,n, EllipseGreen);
+            ChangeActualColors();
+             _manager.LoadX(CrossesLayer);
+             _manager.Load0(CirclesLayer);
+             _manager.LoadButtons(Button_OnClick, ButtonsLayer);
+             _manager.LoadLines(LineLayer);
+             _manager.LoadDiagonalLines(LineLayer);
+             _manager.LoadBorderLines(BackgroundGrid);
         }
-        /// <summary>
-        /// Сброс значения кнопок
-        /// </summary>
-        private void ResetButtons()
-        {
-            // Сброс всех кнопок к начальному виду
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                for (int j = 0; j < buttons.Count; j++)
-                {
-                    buttons[i][j].Text = " ";
-                    buttons[i][j].IsEnabled = true;
-                    Xelements[i][j].IsVisible = false;
-                    Zeroelements[i][j].IsVisible = false;
-                }
-            }
-        }
+        
         /// <summary>
         /// Начало новой игры
         /// </summary>
         private void NewGame()
         {
             timerManager._sessionStartTime = DateTime.Now;
-            ResetButtons();
+            _manager.ResetButtons();
             StartGameFlag = FirstPlayerFlag;
             // Ход передаётся тому, кто в прошлый раз не начинал партию
             if(!StartGameFlag)
@@ -216,25 +203,24 @@
         /// <returns></returns>
         private async Task CreateLine()
         {
-            _manager.LoadDiagonalLines(out MainD, out SecD, LineLayer);
+            _manager.LoadDiagonalLines(LineLayer);
             switch (CheckWin.WinType)
             {
                 case "IsDiagonalWin":
-                    await _manager.AnimateScaleAppearance(MainD, FirstPlayerFlag);
-                    MainD.IsVisible = false;
+                    await _manager.AnimateScaleAppearance(_manager.MainD, FirstPlayerFlag);
+                    _manager.MainD.IsVisible = false;
                     break;
                 case "IsSecondDiagonalWin":
-                    await _manager.AnimateScaleAppearance(SecD, FirstPlayerFlag);
-                    SecD.IsVisible = false;
+                    await _manager.AnimateScaleAppearance(_manager.SecD, FirstPlayerFlag);
+                    _manager.SecD.IsVisible = false;
                     break;
                 case "IsVerticalWin":
-                    await _manager.AnimateScaleAppearance(boxViewsVertical[CheckWin.WinCoordinate], FirstPlayerFlag);
-                    //await Task.Delay();
-                    boxViewsVertical[CheckWin.WinCoordinate].IsVisible = false;
+                    await _manager.AnimateScaleAppearance(_manager.boxViewsVertical[CheckWin.WinCoordinate], FirstPlayerFlag);
+                    _manager.boxViewsVertical[CheckWin.WinCoordinate].IsVisible = false;
                     break;
                 case "IsHorizontallWin":
-                    await _manager.AnimateScaleAppearance(boxViewsHorizontal[CheckWin.WinCoordinate], FirstPlayerFlag);
-                    boxViewsHorizontal[CheckWin.WinCoordinate].IsVisible = false;
+                    await _manager.AnimateScaleAppearance(_manager.boxViewsHorizontal[CheckWin.WinCoordinate], FirstPlayerFlag);
+                    _manager.boxViewsHorizontal[CheckWin.WinCoordinate].IsVisible = false;
                     break;
             }
         }
@@ -282,13 +268,13 @@
             if (FirstPlayerFlag == false)
             {
                 button.Text = "X";
-                Xelements[row][column].IsVisible = true;
+                _manager.Xel[row][column].IsVisible = true;
                 button.FontSize = 0;
                 button.IsEnabled = false;
 
                 FirstPlayerFlag = true; // теперь очередь нолика
 
-                if (CheckWin.IsWin(buttons, 'X') == true)
+                if (CheckWin.IsWin(_manager.Buttons, 'X') == true)
                 {
                     if (!FirstPlayerFlag) scoreController.ZeroWindCount++;
                     else scoreController.XWindCount++;
@@ -306,13 +292,13 @@
             else
             {
                 button.Text = "0";
-                Zeroelements[row][column].IsVisible = true;
+                _manager.ZeroEl[row][column].IsVisible = true;
                 button.FontSize = 0;
                 button.IsEnabled = false;
 
                 FirstPlayerFlag = false;
 
-                if (CheckWin.IsWin(buttons, '0') == true)
+                if (CheckWin.IsWin(_manager.Buttons, '0') == true)
                 {
                     if (!FirstPlayerFlag) scoreController.ZeroWindCount++;
                     else scoreController.XWindCount++;
@@ -328,7 +314,7 @@
                 EllipseGlowDisable();
             }
 
-            if (CheckWin.IsDraw(buttons))
+            if (CheckWin.IsDraw(_manager.Buttons))
             {
                 NewGame();
                 this.IsEnabled = true;
@@ -363,7 +349,9 @@
 
         private async void SettingsButton_Clicked(object sender, EventArgs e)
         {
+            this.IsEnabled = false;
             await Navigation.PushAsync(new SettingsPage());
+            this.IsEnabled = true;
         }
         /// <summary>
         /// Получение состояния игрового поля (для бота)
@@ -375,7 +363,7 @@
             for (int r = 0; r < 3; r++)
                 for (int c = 0; c < 3; c++)
                 {
-                    var t = buttons[r][c].Text;
+                    var t = _manager.Buttons[r][c].Text;
                     int idx = r * 3 + c;
                     board[idx] = t == "X" ? 1 : (t == "0" ? -1 : 0);
                 }
@@ -409,15 +397,15 @@
                 int row = move / 3;
                 int col = move % 3;
 
-                buttons[row][col].Text = "0";
-                Zeroelements[row][col].IsVisible = true;
-                buttons[row][col].FontSize = 0;
-                buttons[row][col].IsEnabled = false;
+                _manager.Buttons[row][col].Text = "0";
+                _manager.ZeroEl[row][col].IsVisible = true;
+                _manager.Buttons[row][col].FontSize = 0;
+                _manager.Buttons[row][col].IsEnabled = false;
 
                 // после хода 0 очередь X
                 FirstPlayerFlag = false;
 
-                if (CheckWin.IsWin(buttons, '0') == true)
+                if (CheckWin.IsWin(_manager.Buttons, '0') == true)
                 {
                     
                     if (!FirstPlayerFlag) scoreController.ZeroWindCount++;
@@ -429,7 +417,7 @@
                     return;
                 }
 
-                if (CheckWin.IsDraw(buttons))
+                if (CheckWin.IsDraw(_manager.Buttons))
                 {
                     NewGame();
                     return;

@@ -1,145 +1,152 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
+using TicTacToeGameProj.Generators;
 namespace TicTacToeGameProj
 {
+    /// <summary>
+    /// Класс для управления UI элементами
+    /// </summary>
     public class UIManager
     {
         private Page Pagee;
-        List<List<Grid>> Xel;
+        public List<List<Grid>> Xel; //Таблица крестиков
+        public List<List<Grid>> ZeroEl; // Таблица ноликов
+        public List<List<Button>> Buttons = new List<List<Button>>(); // Кнопки игрового поля
         private int n = 3;
-        public UIManager(Page page,int N = 3)
+        private UIElementsGenerator _generator = new UIElementsGenerator();
+        public List<BoxView> boxViewsHorizontal = new List<BoxView>();
+        public List<BoxView> boxViewsVertical = new List<BoxView>();
+        public Microsoft.Maui.Controls.Shapes.Path MainD = new();
+        public Microsoft.Maui.Controls.Shapes.Path SecD = new();
+        private Line Line1, Line2; // линии крестика в таблице счёта
+        // поле, хранящее цвет крестика
+        private Color _xColor = Colors.Red;
+        private Ellipse ScoreEllipse;
+        // свойство, реагирующее на изменение цвета крестика
+        public Color XColor
+        {
+            get => _xColor;
+            set
+            {
+                if (_xColor == value)
+                    return;
+
+                _xColor = value;
+                UpdateXColors();
+            }
+        }
+        /// <summary>
+        /// Изменение цвета всех крестиков
+        /// </summary>
+        private void UpdateXColors()
+        {
+            if (Xel == null)
+                return;
+
+            foreach (var row in Xel)
+            {
+                foreach (var crossGrid in row)
+                {
+                    foreach (var child in crossGrid.Children)
+                    {
+                        if (child is Line line)
+                            line.Stroke = _xColor;
+                    }
+                }
+            }
+            if (Line1 != null) Line1.Stroke = _xColor;
+            if (Line2 != null) Line2.Stroke = _xColor;
+            
+        }
+        private Color _ZeroColor = Colors.SpringGreen;
+        // свойство, реагирующее на изменение цвета крестика
+        public Color ZeroColor
+        {
+            get => _ZeroColor;
+            set
+            {
+                if (_ZeroColor == value)
+                    return;
+
+                _ZeroColor = value;
+                UpdateZeroColors();
+            }
+        }
+        /// <summary>
+        /// Изменение цвета всех ноликов
+        /// </summary>
+        private void UpdateZeroColors()
+        {
+            if (ZeroEl == null)
+                return;
+
+            foreach (var row in ZeroEl)
+            {
+                foreach (var crossGrid in row)
+                {
+                    foreach (var child in crossGrid.Children)
+                    {
+                        if (child is Ellipse line)
+                            line.Stroke = _ZeroColor;
+                    }
+                }
+            }
+            if (ScoreEllipse != null) ScoreEllipse.Stroke = _ZeroColor; 
+        }
+        public UIManager(Page page,Line line1 = null,Line line2 = null,int N = 3,Ellipse SEllipse = null)
         {
             Pagee = page;
             n = N;
+            Line1 = line1;
+            Line2 = line2;
+            ScoreEllipse = SEllipse;
         }
         /// <summary>
         /// Загрузка крестиков
         /// </summary>
         /// <param name="n"></param>
-        public void LoadX(out List<List<Grid>> Xelements,Grid XGrid)
+        public async Task LoadX(Grid XGrid)
         {
-            Xelements = new List<List<Grid>>();
+            Xel = new List<List<Grid>>();
             for (int i = 0; i < n; i++)
             {
-                Xelements.Add(new List<Grid>());
+                Xel.Add(new List<Grid>());
                 XGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 XGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                 for (int j = 0; j < n; j++)
                 {
                     // Создаем контейнер Grid для крестика
-                    var crossGrid = new Grid
-                    {
-                        RowDefinitions = new RowDefinitionCollection
-                    {
-                        new RowDefinition { Height = GridLength.Star }
-                    },
-                        ColumnDefinitions = new ColumnDefinitionCollection
-                    {
-                        new ColumnDefinition { Width = GridLength.Star }
-                    },
-                        Opacity = 1,
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions = LayoutOptions.Center,
-                        WidthRequest = 60,
-                        HeightRequest = 60,
-                        Padding = 3,
-                        Margin = 3
-                    };
-                    crossGrid.IsVisible = false;
-                    // Первая диагональная линия (из левого верхнего в правый нижний угол)
-                    var line1 = new Line
-
-                    {
-                        Stroke = Colors.Red,
-                        StrokeThickness = 4,
-                        X1 = 0,
-                        Y1 = 0,
-                        X2 = 60,
-                        Y2 = 60,
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions = LayoutOptions.Center
-                    };
-
-                    // Вторая диагональная линия (из правого верхнего в левый нижний угол)
-                    var line2 = new Line
-                    {
-                        Stroke = Colors.Red,
-                        StrokeThickness = 4,
-                        X1 = 60,
-                        Y1 = 0,
-                        X2 = 0,
-                        Y2 = 60,
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions = LayoutOptions.Center
-                    };
-
-                    // Добавляем линии в Grid
-                    crossGrid.Children.Add(line1);
-                    crossGrid.Children.Add(line2);
-
+                    var crossGrid = _generator.CreateX(XColor);
                     // Устанавливаем позицию в родительском Grid (если нужно)
                     Grid.SetRow(crossGrid, i); // Вторая строка (индекс 2)
                     Grid.SetColumn(crossGrid, j); // Первая колонка (индекс 0)
-                    Xelements[i].Add(crossGrid);
+                    Xel[i].Add(crossGrid);
                     XGrid.Children.Add(crossGrid);
                 }
             }
-            Xel = Xelements;
         }
         /// <summary>
         /// Загрузка ноликов
         /// </summary>
         /// <param name="Zeroelements"></param>
-        public void Load0(out List<List<Grid>> Zeroelements, Grid XGrid)
+        public async Task Load0(Grid XGrid)
         {
-            Zeroelements = new List<List<Grid>>();
+            ZeroEl = new List<List<Grid>>();
             for (int i = 0; i < n; i++)
             {
-                Zeroelements.Add(new List<Grid>());
+                ZeroEl.Add(new List<Grid>());
                 XGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 XGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                 for (int j = 0; j < n; j++)
                 {
-                    // Создаем контейнер Grid для нолика
-                    var circleGrid = new Grid
-                    {
-                        RowDefinitions = new RowDefinitionCollection
-                        {
-                            new RowDefinition { Height = GridLength.Star }
-                        },
-                        ColumnDefinitions = new ColumnDefinitionCollection
-                        {
-                            new ColumnDefinition { Width = GridLength.Star }
-                        },
-                        Opacity = 1,
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions = LayoutOptions.Center,
-                        WidthRequest = 60,
-                        HeightRequest = 60,
-                        Padding = 3,
-                        Margin = 3,
-                    };
-                    circleGrid.IsVisible= false;
-                    // Создаем сам нолик (Ellipse)
-                    var circle = new Ellipse
-                    {
-                        Stroke = Colors.SpringGreen,
-                        StrokeThickness = 4,
-                        WidthRequest = 60,
-                        HeightRequest = 60,
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions = LayoutOptions.Center
-                    };
-
-                    // Добавляем нолик в Grid
-                    circleGrid.Children.Add(circle);
-
+                    // создание нолика
+                    var circleGrid = _generator.CreateZero(ZeroColor);
                     // Устанавливаем позицию в родительском Grid (CirclesLayer)
                     Grid.SetRow(circleGrid, 2); // Для ячейки (2,0)
                     Grid.SetColumn(circleGrid, 0);
                     // Устанавливаем позицию в родительском Grid (если нужно)
                     Grid.SetRow(circleGrid, i); // Вторая строка (индекс 2)
                     Grid.SetColumn(circleGrid, j); // Первая колонка (индекс 0)
-                    Zeroelements[i].Add(circleGrid);
+                    ZeroEl[i].Add(circleGrid);
                     XGrid.Children.Add(circleGrid);
                 }
             }
@@ -147,67 +154,31 @@ namespace TicTacToeGameProj
         /// <summary>
         /// Создание игровых кнопок в формате n на n
         /// </summary>
-        public void LoadButtons(out List<List<Button>> buttons, EventHandler Button_OnClick, Grid ButtonsGrid )
+        public async Task LoadButtons(EventHandler Button_OnClick, Grid ButtonsGrid )
         {
-            buttons = new List<List<Button>>();
+            Buttons = new List<List<Button>>();
             for (int i = 0; i < n; i++)
             {
                 // Разделение грида на строки и столбцы
-                buttons.Add(new List<Button>());
+                Buttons.Add(new List<Button>());
                 ButtonsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 ButtonsGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                 for (int j = 0; j < n; j++)
                 {
-                    // Создание кнопки
-                    var button = new Button();
-                    button.Text = " ";
-                    button.Clicked += Button_OnClick;
-                    button.BackgroundColor = Colors.Transparent;
-                    button.FontSize = 0;
-                    button.TextColor = Colors.Transparent;
-                    //button.SetResourceReference(Button.StyleProperty, "CThemeButton");
+                    var button = _generator.CreateGameButton(Button_OnClick);
                     // Добавление кнопки в грид и список
                     Grid.SetRow(button, i);
                     Grid.SetColumn(button, j);
                     ButtonsGrid.Children.Add(button);
-                    buttons[i].Add(button);
+                    Buttons[i].Add(button);
                 }
             }
         }
-        /// <summary>
-        /// Создание столбцов
-        /// </summary>
-        /// <returns></returns>
-        private BoxView CreateLineVertical()
-        {
-            return new BoxView
-            {
-                Color = Colors.Red,
-                WidthRequest = 10,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.Center,
-                IsVisible = false
-            };
-        }
-        /// <summary>
-        /// Создание столбцов
-        /// </summary>
-        /// <returns></returns>
-        private BoxView CreateLineHorizontal()
-        {
-            return new BoxView
-            {
-                Color = Colors.Red,
-                HeightRequest = 10,
-                VerticalOptions = LayoutOptions.Center,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                IsVisible = false
-            };
-        }
+       
         /// <summary>
         /// Создание линий для анимаций
         /// </summary>
-        public void LoadLines(out List<BoxView> boxViewsHorizontal, out List<BoxView> boxViewsVertical, Grid LinesGrid)
+        public async Task LoadLines(Grid LinesGrid)
         {
             boxViewsHorizontal = new List<BoxView>();
             boxViewsVertical = new List<BoxView>();
@@ -217,14 +188,14 @@ namespace TicTacToeGameProj
                 LinesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 LinesGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                 // Заполнение строк
-                var RedView = CreateLineHorizontal();
+                var RedView = _generator.CreateLineHorizontal();
                 Grid.SetRow(RedView, i);
                 Grid.SetColumn(RedView, 0);
                 Grid.SetColumnSpan(RedView, n);
                 LinesGrid.Children.Add(RedView);
                 boxViewsHorizontal.Add(RedView);
                 // Заполнение столбцов
-                var RedView2 = CreateLineVertical();
+                var RedView2 = _generator.CreateLineVertical();
                 Grid.SetRow(RedView2, 0);
                 Grid.SetColumn(RedView2, i);
                 Grid.SetRowSpan(RedView2, n);
@@ -232,63 +203,14 @@ namespace TicTacToeGameProj
                 boxViewsVertical.Add(RedView2);
             }
         }
-        public void LoadDiagonalLines(out Microsoft.Maui.Controls.Shapes.Path MainD,
-            out Microsoft.Maui.Controls.Shapes.Path SecD, Grid LinesGrid)
+        public async Task LoadDiagonalLines(Grid LinesGrid)
         {
-           
-            MainD = new Microsoft.Maui.Controls.Shapes.Path
-            {
-                // Настройка внешнего вида
-                Stroke = Colors.Red,
-                StrokeThickness = 10,
-                Data = new PathGeometry
-                {
-                    Figures = new PathFigureCollection
-                    {
-                        new PathFigure
-                        {
-                            StartPoint = new Point(0, 0), 
-                            Segments = new PathSegmentCollection
-                            {
-                                new LineSegment
-                                {
-                                    Point = new Point(LinesGrid.Width,LinesGrid.Height) 
-                                }
-                            }
-                        }
-                    }
-                }
-            };
+
+            MainD = _generator.CreateMainDiagonalLine(LinesGrid);
             Grid.SetRowSpan(MainD, LinesGrid.RowDefinitions.Count);
             Grid.SetColumnSpan(MainD, LinesGrid.ColumnDefinitions.Count);
             LinesGrid.Children.Add(MainD);
-            SecD = new Microsoft.Maui.Controls.Shapes.Path
-            {
-                Data = new PathGeometry
-                {
-                    Figures = new PathFigureCollection
-                    {
-                        new PathFigure
-                        {
-                            StartPoint = new Point(0, LinesGrid.Height),
-                            Segments = new PathSegmentCollection
-                            {
-                                new LineSegment
-                                {
-                                    Point = new Point(LinesGrid.Width, 0)
-                                }
-                            }
-                        }
-                    }
-                },
-                Stroke = Colors.Red,
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
-                Aspect = Stretch.Uniform, 
-                StrokeThickness = 10
-            };
-            SecD.IsVisible = false;
-            MainD.IsVisible = false;
+            SecD = _generator.CreateSecondDiagonalLine(LinesGrid);
             Grid.SetRowSpan(SecD, LinesGrid.RowDefinitions.Count);
             Grid.SetColumnSpan(SecD, LinesGrid.ColumnDefinitions.Count);
             LinesGrid.Children.Add(SecD);
@@ -297,7 +219,7 @@ namespace TicTacToeGameProj
         /// Создание разметки поля
         /// </summary>
         /// <param name="BgGrid"></param>
-        public void LoadBorderLines(Grid BgGrid)
+        public async Task LoadBorderLines(Grid BgGrid)
         {
             for (int i = 0; i < n; i++)
             {
@@ -307,31 +229,18 @@ namespace TicTacToeGameProj
                 {
                     break;
                 }
-                // 
-                var HorizontalView = new BoxView
-                {
-                    Color = Colors.Black,
-                    HeightRequest =3,
-                    VerticalOptions = LayoutOptions.End
-                };
+                // Создание горизонтальной линии
+                var HorizontalView = _generator.CreateHorizontalBorderLIne();
                 Grid.SetRow(HorizontalView, i);
                 Grid.SetColumn(HorizontalView, 0);
                 Grid.SetColumnSpan(HorizontalView, n);
                 BgGrid.Children.Add(HorizontalView);
-  
-                // 
-                var VertView = new BoxView
-                {
-                    Color = Colors.Black,
-                    WidthRequest = 3,
-                    HorizontalOptions = LayoutOptions.End
-                };
+                // Создание вертикальной линии
+                var VertView = _generator.CreateVerticallBorderLIne();
                 Grid.SetRow(VertView, 0);
                 Grid.SetColumn(VertView, i);
                 Grid.SetRowSpan(VertView, n);
                 BgGrid.Children.Add(VertView);
-              
-               
             }
         }
         /// <summary>
@@ -344,15 +253,15 @@ namespace TicTacToeGameProj
             myBoxView.IsVisible = true;
             if (!FirstPlayerFlag)
             {
-                myBoxView.BackgroundColor = Colors.SpringGreen;
-                myBoxView.Background = Colors.SpringGreen;
-                myBoxView.Stroke = Colors.SpringGreen;
+                myBoxView.BackgroundColor = ZeroColor;
+                myBoxView.Background = ZeroColor;
+                myBoxView.Stroke = ZeroColor;
             }
             else
             {
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.Stroke = Colors.Red;
+                myBoxView.BackgroundColor = XColor;
+                myBoxView.BackgroundColor = XColor;
+                myBoxView.Stroke = XColor;
             }
             // Анимация увеличения масштаба с эффектом "пружины"
             await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
@@ -370,21 +279,38 @@ namespace TicTacToeGameProj
             myBoxView.IsVisible = true;
             if (!FirstPlayerFlag)
             {
-                myBoxView.BackgroundColor = Colors.SpringGreen;
-                myBoxView.Background = Colors.SpringGreen;
-                myBoxView.Color = Colors.SpringGreen;
+                myBoxView.BackgroundColor = ZeroColor;
+                myBoxView.Background = ZeroColor;
+                myBoxView.Color = ZeroColor;
             }
             else
             {
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.BackgroundColor = Colors.Red;
-                myBoxView.Color = Colors.Red;
+                myBoxView.BackgroundColor = ZeroColor;
+                myBoxView.BackgroundColor = ZeroColor;
+                myBoxView.Color = ZeroColor;
             }
             // Анимация увеличения масштаба с эффектом "пружины"
             await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
             // Дополнительно: небольшая вибрация после появления
             await myBoxView.ScaleTo(1.05, 1000, Easing.BounceOut);
             await myBoxView.ScaleTo(1, 1000, Easing.BounceOut);
+        }
+        /// <summary>
+        /// Сброс значения кнопок
+        /// </summary>
+        public void ResetButtons()
+        {
+            // Сброс всех кнопок к начальному виду
+            for (int i = 0; i < Buttons.Count; i++)
+            {
+                for (int j = 0; j < Buttons.Count; j++)
+                {
+                    Buttons[i][j].Text = " ";
+                    Buttons[i][j].IsEnabled = true;
+                    Xel[i][j].IsVisible = false;
+                    ZeroEl[i][j].IsVisible = false;
+                }
+            }
         }
     }
 }

@@ -16,7 +16,9 @@
                 { "language", "English" },
                 { "music", "OFF" }, // OFF или ON
                 { "vsbot", "OFF" },// OFF или ON
-                { "botdifficulty", "Easy" } // Easy, Normal, Hard
+                { "botdifficulty", "Easy" }, // Easy, Normal, Hard
+                {"xcolor", "#d90d0d" },
+                {"zerocolor","#25e310" } // HEX color
             };
 
         /// <summary>

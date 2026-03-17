@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Maui;
+using Maui.ColorPicker;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 namespace TicTacToeGameProj
 {
     public static class MauiProgram
@@ -15,9 +17,10 @@ namespace TicTacToeGameProj
                 });
             builder.UseMauiCommunityToolkit();
             builder.UseMauiApp<App>().UseMauiCommunityToolkit();
+            builder.UseMauiApp<App>().UseSkiaSharp();
 #if DEBUG
-            
-            
+
+
 #endif
 
             return builder.Build();

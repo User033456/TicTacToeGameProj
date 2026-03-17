@@ -24,7 +24,7 @@
                Aspect="AspectFill" />
 
         <Grid x:Name="MainGrid"
-              RowDefinitions="0.1*, 0.2*, 0.2*, 0.2*, 0.2*, 0.2*,0.3*"
+              RowDefinitions="0.1*, 0.3*, 0.2*, 0.2*, 0.2*, 0.2*,0.2*,0.2*"
               ColumnDefinitions="*,*"
               RowSpacing="15"
               ColumnSpacing="15"
@@ -59,7 +59,7 @@
             </HorizontalStackLayout>
 
             <!-- LANGUAGE -->
-            <Frame Grid.Row="1" Grid.ColumnSpan="2"
+            <Frame Grid.Row="6" Grid.ColumnSpan="2"
                    CornerRadius="25"
                    BackgroundColor="#D9D9D9"
                    BorderColor="#D9D9D9"
@@ -289,7 +289,86 @@ Text="{loc:Translate Key=SettingsMusicOff}">
                     </Frame>
                 </Grid>
             </Frame>
-            <Grid Grid.Row="6" Grid.ColumnSpan="2"/>
+            <Frame Grid.Row="1" Grid.ColumnSpan="2"  BorderColor="#D9D9D9"
+                 VerticalOptions="FillAndExpand"
+                 CornerRadius="25"
+                 BackgroundColor="Transparent"
+                 Padding="0"
+                 HorizontalOptions="FillAndExpand"  >
+                <Grid RowDefinitions="0.53*, *" x:Name="ChangeColorGrid">
+                    <Frame
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="FillAndExpand"
+                        CornerRadius="0"  Grid.Row="0"
+                        BorderColor="#D9D9D9"
+                        BackgroundColor="#D9D9D9" 
+                        Opacity="0.6" 
+                        Padding="10">
+                        <Label Text="ChangeColor"
+                               TextColor="#020136"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </Frame>
+                    <Frame Grid.Row="1" CornerRadius="0"  Opacity="0.75" BackgroundColor="#D9D9D9"
+                               HorizontalOptions="FillAndExpand"
+                               VerticalOptions="FillAndExpand"
+                               BorderColor="#D9D9D9"
+                               >
+                        <Grid x:Name="ChangeColorElementsGrid" RowDefinitions="*" ColumnDefinitions="1.1*,*,1.1*,*">
+                            <!-- Крестик -->
+                            <ContentView x:Name="RedLineOneCV" Grid.Row="0" Grid.Column="0"
+              WidthRequest="30" HeightRequest="26"
+              HorizontalOptions="Center"
+                                         >
+                                <Line X1="25" Y1="0" X2="0" Y2="25" x:Name="Line1"
+          Stroke="Red" StrokeThickness="4">
+                                    <Line.Shadow >
+                                        <Shadow x:Name="RedLineOneShadow" Brush="Blue" 
+                     Offset="0,0"
+                     Radius="3" 
+                     Opacity="0"/>
+                                    </Line.Shadow>
+                                </Line>
+                            </ContentView>
+
+                            <ContentView Grid.Row="0" Grid.Column="0" x:Name="RedLineTwoCV"
+              WidthRequest="26" HeightRequest="26"
+              HorizontalOptions="Center">
+                                <Line X1="0" Y1="0" X2="25" Y2="25" x:Name="Line2"
+          Stroke="Red" StrokeThickness="4">
+                                    <Line.Shadow>
+                                        <Shadow x:Name="RedLineTwoShadow" Brush="Blue" 
+                     Offset="0,0" 
+                     Radius="3" 
+                     Opacity="0"/>
+                                    </Line.Shadow>
+                                </Line>
+                            </ContentView>
+                            
+                            <ImageButton Clicked="ChangeXColor_Clicked" Source="colorwheel.png" Grid.Column="1" x:Name="ChangeXColor">
+
+                            </ImageButton>
+                            <!-- Нолик -->
+                            <Ellipse Grid.Row="0" Grid.Column="2"
+         WidthRequest="30" HeightRequest="30"
+         Stroke="Green" StrokeThickness="4"
+         x:Name="EllipseGreen">
+                                <Ellipse.Shadow>
+                                    <Shadow x:Name="EllipseShadow" Brush="Blue" 
+                Offset="0,0"
+                Radius="3" 
+                Opacity="0"/>
+                                </Ellipse.Shadow>
+                            </Ellipse>
+                            <ImageButton Clicked="ChangeZeroColor_Clicked" Source="colorwheel.png" Grid.Column="3" x:Name="ChangeZeroColor">
+
+                            </ImageButton>
+                        </Grid>
+                    </Frame>
+                </Grid>
+            </Frame>
+            <Grid Grid.Row="7" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>
 </ContentPage>
